@@ -9,13 +9,13 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, getDoc, orderBy, query, where, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
     const firebaseConfig = {
-      apiKey: "AIzaSyABw2pQJJ_dBT3pv0OXCdgAiZ2waPv1Xxs",
-      authDomain: "drcnbnorth59.firebaseapp.com",
-      projectId: "drcnbnorth59",
-      storageBucket: "drcnbnorth59.firebasestorage.app",
-      messagingSenderId: "132105415700",
-      appId: "1:132105415700:web:c7a8b5ab549a7c2eae8b01",
-      measurementId: "G-LY5WVWCGDX"
+      apiKey: "AIzaSyC3kdoOmmbqrbbriqXXxzhylGMBeYN8K0w",
+      authDomain: "allo-carlos-76.firebaseapp.com",
+      projectId: "allo-carlos-76",
+      storageBucket: "allo-carlos-76.firebasestorage.app",
+      messagingSenderId: "985485162652",
+      appId: "1:985485162652:web:0c29d10167be2b77f11559",
+      measurementId: "G-6L73ENVDJR"
     };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -312,6 +312,13 @@ textarea{min-height:80px;resize:vertical;}
 .commande-total{font-family:'Bangers',cursive;font-size:0.9rem;color:var(--orange);letter-spacing:1px;}
 .commande-items{font-size:0.85rem;color:#ffffff;line-height:1.5;font-family:var(--font-body);}
 .commande-mode{display:inline-block;margin-top:6px;background:rgba(176,38,255,0.10);border:1px solid rgba(176,38,255,0.2);color:rgba(125,255,176,0.85);font-size:0.7rem;font-weight:800;padding:3px 10px;border-radius:4px;letter-spacing:1px;font-family:var(--font-body);text-transform:uppercase;}
+
+/* LANGUE (profil) */
+.lang-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.lang-btn{display:flex;align-items:center;gap:10px;background:var(--bg-card);border:1px solid rgba(176,38,255,0.18);color:var(--white);padding:12px 14px;border-radius:12px;cursor:pointer;font-family:var(--font-body);font-weight:800;font-size:0.85rem;letter-spacing:0.5px;transition:all .2s;}
+.lang-btn .lang-flag{font-size:1.3rem;}
+.lang-btn.active{background:linear-gradient(135deg,rgba(176,38,255,0.30),rgba(0,229,255,0.18));border-color:rgba(57,255,138,0.45);box-shadow:0 0 14px rgba(176,38,255,0.3);}
+.profil-toggle-btn{width:100%;padding:13px;background:rgba(176,38,255,0.10);border:1px solid rgba(176,38,255,0.25);color:var(--orange);border-radius:12px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
 
 /* ADMIN */
 #admin-overlay{display:none;position:fixed;inset:0;z-index:99999;background:rgba(5,0,15,0.99);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 120px;}
@@ -659,7 +666,7 @@ textarea{min-height:80px;resize:vertical;}
           <img src="dino.jpg" alt="DrCNBNorth 59" onerror="this.parentElement.style.background='#17082e'">
         </div>
         <div class="hero-brand">ALLO CARLOS 76 </div>
-        <div class="hero-tagline">⚗️ PREMIUM TERPS SHOP ⚗️</div>
+        <div class="hero-tagline" data-i18n="hero_tagline">⚗️ PREMIUM TERPS SHOP ⚗️</div>
         <div class="hero-strip">
           <span class="hero-chip">76</span>
           <span class="hero-chip">✨ TERPS HIGH</span>
@@ -668,7 +675,7 @@ textarea{min-height:80px;resize:vertical;}
       </div>
       <div style="height:14px"></div>
       <div id="products-header">
-        <div class="products-title">🧪 Catalogue</div>
+        <div class="products-title">🧪 <span data-i18n="catalogue_title">Catalogue</span></div>
         <div id="products-count-modern" class="products-count">
           <div class="products-count-number">0</div>
           <div class="products-count-label">Produits</div>
@@ -696,33 +703,33 @@ textarea{min-height:80px;resize:vertical;}
         <div class="badges"><div class="badge badge-farm" id="detail-farm-badge"></div></div>
         <div class="strain-section" id="detail-strain-desc"></div>
         <div class="quantity-section">
-          <div class="quantity-title"><span>🛍️</span> Sélectionner la Quantité</div>
+          <div class="quantity-title"><span>🛍️</span> <span data-i18n="quantity_title">Sélectionner la Quantité</span></div>
           <div class="quantity-grid" id="qty-grid"></div>
         </div>
-        <button class="add-to-cart" id="add-to-cart-btn"><span>🛒</span> Ajouter au Panier</button>
+        <button class="add-to-cart" id="add-to-cart-btn"><span>🛒</span> <span data-i18n="add_to_cart_btn">Ajouter au Panier</span></button>
       </div>
     </div>
 
     <!-- PANIER -->
     <div id="cart-page">
-      <h2 style="color:var(--orange);text-align:center;margin:18px 0;font-family:'Bangers',cursive;font-size:2rem;letter-spacing:3px;text-shadow:2px 2px 0 var(--red-dark);">Votre Panier 🛒</h2>
+      <h2 style="color:var(--orange);text-align:center;margin:18px 0;font-family:'Bangers',cursive;font-size:2rem;letter-spacing:3px;text-shadow:2px 2px 0 var(--red-dark);"><span data-i18n="cart_title">Votre Panier 🛒</span></h2>
       <div id="cart-items"></div>
       <div id="cart-total" class="cart-total"></div>
       <div class="questionnaire">
         <div class="question">
-          <span class="question-label">Mode de récupération :</span>
-          <button class="option-btn" data-type="pickup">Venir sur place</button>
-          <button class="option-btn" data-type="delivery">Livraison</button>
+          <span class="question-label" data-i18n="mode_label">Mode de récupération :</span>
+          <button class="option-btn" data-type="pickup" data-i18n="mode_pickup">Venir sur place</button>
+          <button class="option-btn" data-type="delivery" data-i18n="mode_delivery">Livraison</button>
         </div>
         <div id="pickup-questions" style="display:none">
-          <div class="question"><span class="question-label">Pour quelle heure ?</span><input type="time" id="pickup-time"></div>
+          <div class="question"><span class="question-label" data-i18n="pickup_time_label">Pour quelle heure ?</span><input type="time" id="pickup-time"></div>
         </div>
         <div id="delivery-questions" style="display:none">
-          <div class="question"><span class="question-label">Heure souhaitée</span><input type="time" id="delivery-time"></div>
-          <div class="question"><span class="question-label">Adresse complète</span><input type="text" id="delivery-address" placeholder="Rue, numéro, ville..."></div>
-          <div class="question"><span class="question-label">Précisions (étage, code, etc.)</span><textarea id="delivery-details" placeholder="Interphone, digicode, remarques..."></textarea></div>
+          <div class="question"><span class="question-label" data-i18n="delivery_time_label">Heure souhaitée</span><input type="time" id="delivery-time"></div>
+          <div class="question"><span class="question-label" data-i18n="delivery_address_label">Adresse complète</span><input type="text" id="delivery-address" data-i18n-placeholder="delivery_address_placeholder" placeholder="Rue, numéro, ville..."></div>
+          <div class="question"><span class="question-label" data-i18n="delivery_details_label">Précisions (étage, code, etc.)</span><textarea id="delivery-details" data-i18n-placeholder="delivery_details_placeholder" placeholder="Interphone, digicode, remarques..."></textarea></div>
         </div>
-        <button id="submit-order-btn">Commander 🍬</button>
+        <button id="submit-order-btn" data-i18n="submit_order_btn">Commander 🍬</button>
       </div>
     </div>
 
@@ -734,26 +741,26 @@ textarea{min-height:80px;resize:vertical;}
 
     <!-- RÉSEAUX -->
     <div id="reseaux-page">
-      <h2 class="section-title">🔥 Nos réseaux</h2>
+      <h2 class="section-title" data-i18n="reseaux_title">🔥 Nos réseaux</h2>
       <div class="reseaux-list" id="reseaux-list-container"></div>
     </div>
 
     <!-- AVIS -->
     <div id="avis-page" style="display:none;padding:16px 16px 110px">
-      <h2 class="section-title">⭐ Avis clients</h2>
+      <h2 class="section-title" data-i18n="avis_title">⭐ Avis clients</h2>
       <div class="info-card" style="margin-bottom:18px">
-        <div class="info-card-header"><div class="info-card-icon">✍️</div><div class="info-card-title">Laisser un avis</div></div>
+        <div class="info-card-header"><div class="info-card-icon">✍️</div><div class="info-card-title" data-i18n="avis_leave_title">Laisser un avis</div></div>
         <div style="margin-bottom:14px">
-          <div style="color:var(--white);font-size:0.9rem;margin-bottom:8px;font-weight:800;font-family:var(--font-body);letter-spacing:1px;text-transform:uppercase;">Votre note</div>
+          <div style="color:var(--white);font-size:0.9rem;margin-bottom:8px;font-weight:800;font-family:var(--font-body);letter-spacing:1px;text-transform:uppercase;" data-i18n="avis_note_label">Votre note</div>
           <div id="star-rating" style="display:flex;gap:8px;font-size:2rem;cursor:pointer">
             <span class="star" data-v="1">☆</span><span class="star" data-v="2">☆</span><span class="star" data-v="3">☆</span><span class="star" data-v="4">☆</span><span class="star" data-v="5">☆</span>
           </div>
         </div>
         <div style="margin-bottom:14px">
-          <div style="color:var(--white);font-size:0.9rem;margin-bottom:8px;font-weight:800;font-family:var(--font-body);letter-spacing:1px;text-transform:uppercase;">Votre commentaire</div>
-          <textarea id="avis-text" placeholder="Partagez votre expérience..."></textarea>
+          <div style="color:var(--white);font-size:0.9rem;margin-bottom:8px;font-weight:800;font-family:var(--font-body);letter-spacing:1px;text-transform:uppercase;" data-i18n="avis_comment_label">Votre commentaire</div>
+          <textarea id="avis-text" data-i18n-placeholder="avis_comment_placeholder" placeholder="Partagez votre expérience..."></textarea>
         </div>
-        <button id="submit-avis-btn" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:var(--white);border:1px solid rgba(57,255,138,0.2);border-radius:12px;font-size:1.1rem;cursor:pointer;font-family:'Bangers',cursive;letter-spacing:2px;">Publier mon avis ⭐</button>
+        <button id="submit-avis-btn" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:var(--white);border:1px solid rgba(57,255,138,0.2);border-radius:12px;font-size:1.1rem;cursor:pointer;font-family:'Bangers',cursive;letter-spacing:2px;" data-i18n="avis_submit_btn">Publier mon avis ⭐</button>
       </div>
       <div id="avis-list"></div>
     </div>
@@ -765,28 +772,28 @@ textarea{min-height:80px;resize:vertical;}
     <nav>
       <div class="nav-item active" id="nav-home">
         <span class="nav-emoji">🏠</span>
-        <span class="nav-label">Accueil</span>
+        <span class="nav-label" data-i18n="nav_home">Accueil</span>
       </div>
       <div class="nav-item" id="nav-cart">
         <span class="nav-emoji">🛒</span>
-        <span class="nav-label">Panier</span>
+        <span class="nav-label" data-i18n="nav_cart">Panier</span>
         <span id="cart-badge"></span>
       </div>
       <div class="nav-item" id="nav-avis">
         <span class="nav-emoji">⭐</span>
-        <span class="nav-label">Favoris</span>
+        <span class="nav-label" data-i18n="nav_avis">Favoris</span>
       </div>
       <div class="nav-item" id="nav-infos">
         <span class="nav-emoji">ℹ️</span>
-        <span class="nav-label">Infos</span>
+        <span class="nav-label" data-i18n="nav_infos">Infos</span>
       </div>
       <div class="nav-item" id="nav-reseaux">
         <span class="nav-emoji">📡</span>
-        <span class="nav-label">Satellites</span>
+        <span class="nav-label" data-i18n="nav_reseaux">Satellites</span>
       </div>
       <div class="nav-item" id="nav-profil">
         <span class="nav-emoji">👤</span>
-        <span class="nav-label">Profil</span>
+        <span class="nav-label" data-i18n="nav_profil">Profil</span>
       </div>
     </nav>
   </div>
@@ -804,6 +811,191 @@ if (tg) {
   tg.enableClosingConfirmation();
   tgUser = tg.initDataUnsafe?.user || null;
 }
+
+// ============ I18N : système de langues (FR / EN / AR / IT / ES) ============
+const LANGS = {
+  fr: { label: 'Français', flag: '🇫🇷' },
+  en: { label: 'English',  flag: '🇬🇧' },
+  ar: { label: 'العربية',  flag: '🇸🇦' },
+  it: { label: 'Italiano', flag: '🇮🇹' },
+  es: { label: 'Español',  flag: '🇪🇸' }
+};
+
+const I18N = {
+  fr: {
+    nav_home:'Accueil', nav_cart:'Panier', nav_avis:'Favoris', nav_infos:'Infos', nav_reseaux:'Satellites', nav_profil:'Profil',
+    hero_tagline:'⚗️ PREMIUM TERPS SHOP ⚗️',
+    catalogue_title:'Catalogue', produits_label:'Produits', produit_label:'Produit',
+    filter_all_categories:'Toutes catégories', filter_all_farms:'Toutes farms',
+    no_results:'Aucun produit 🔍',
+    cart_title:'Votre Panier 🛒', cart_empty:'Votre panier est vide',
+    mode_label:'Mode de récupération :', mode_pickup:'Venir sur place', mode_delivery:'Livraison',
+    pickup_time_label:'Pour quelle heure ?', delivery_time_label:'Heure souhaitée',
+    delivery_address_label:'Adresse complète', delivery_address_placeholder:'Rue, numéro, ville...',
+    delivery_details_label:'Précisions (étage, code, etc.)', delivery_details_placeholder:'Interphone, digicode, remarques...',
+    submit_order_btn:'Commander 🍬',
+    quantity_title:'Sélectionner la Quantité', add_to_cart_btn:'Ajouter au Panier', add_to_cart_restock_btn:'RESTOCK EN COURS...',
+    select_qty_alert:'Sélectionnez une quantité !', added_to_cart_alert:'✅ Ajouté au panier !',
+    cart_empty_alert:'Votre panier est vide', select_mode_alert:'Veuillez choisir un mode de récupération.',
+    avis_title:'⭐ Avis clients', avis_leave_title:'Laisser un avis', avis_note_label:'Votre note',
+    avis_comment_label:'Votre commentaire', avis_comment_placeholder:'Partagez votre expérience...',
+    avis_submit_btn:'Publier mon avis ⭐', avis_empty:"Aucun avis pour l'instant.",
+    avis_select_note_alert:'Veuillez sélectionner une note ⭐', avis_write_comment_alert:'Veuillez écrire un commentaire',
+    avis_success_alert:'✅ Merci pour votre avis !', avis_error_alert:'❌ Erreur lors de la publication. Réessaie.',
+    reseaux_title:'🔥 Nos réseaux',
+    profil_orders_count:'commande(s) passée(s)', profil_my_orders_title:'📦 Mes commandes',
+    profil_view_orders_btn:'📦 Voir mes commandes', profil_hide_orders_btn:'🔽 Masquer mes commandes',
+    profil_no_orders:"Aucune commande pour l'instant.", profil_language_title:'🌐 Langue',
+    profil_invite:'Invité'
+  },
+  en: {
+    nav_home:'Home', nav_cart:'Cart', nav_avis:'Reviews', nav_infos:'Info', nav_reseaux:'Links', nav_profil:'Profile',
+    hero_tagline:'⚗️ PREMIUM TERPS SHOP ⚗️',
+    catalogue_title:'Catalogue', produits_label:'Products', produit_label:'Product',
+    filter_all_categories:'All categories', filter_all_farms:'All farms',
+    no_results:'No products 🔍',
+    cart_title:'Your Cart 🛒', cart_empty:'Your cart is empty',
+    mode_label:'Pickup method:', mode_pickup:'Come in person', mode_delivery:'Delivery',
+    pickup_time_label:'What time?', delivery_time_label:'Preferred time',
+    delivery_address_label:'Full address', delivery_address_placeholder:'Street, number, city...',
+    delivery_details_label:'Details (floor, code, etc.)', delivery_details_placeholder:'Intercom, door code, notes...',
+    submit_order_btn:'Order 🍬',
+    quantity_title:'Select Quantity', add_to_cart_btn:'Add to Cart', add_to_cart_restock_btn:'RESTOCKING...',
+    select_qty_alert:'Please select a quantity!', added_to_cart_alert:'✅ Added to cart!',
+    cart_empty_alert:'Your cart is empty', select_mode_alert:'Please choose a pickup method.',
+    avis_title:'⭐ Customer reviews', avis_leave_title:'Leave a review', avis_note_label:'Your rating',
+    avis_comment_label:'Your comment', avis_comment_placeholder:'Share your experience...',
+    avis_submit_btn:'Post my review ⭐', avis_empty:'No reviews yet.',
+    avis_select_note_alert:'Please select a rating ⭐', avis_write_comment_alert:'Please write a comment',
+    avis_success_alert:'✅ Thanks for your review!', avis_error_alert:'❌ Error posting review. Try again.',
+    reseaux_title:'🔥 Our links',
+    profil_orders_count:'order(s) placed', profil_my_orders_title:'📦 My orders',
+    profil_view_orders_btn:'📦 View my orders', profil_hide_orders_btn:'🔽 Hide my orders',
+    profil_no_orders:'No orders yet.', profil_language_title:'🌐 Language',
+    profil_invite:'Guest'
+  },
+  ar: {
+    nav_home:'الرئيسية', nav_cart:'السلة', nav_avis:'التقييمات', nav_infos:'معلومات', nav_reseaux:'الروابط', nav_profil:'الملف الشخصي',
+    hero_tagline:'⚗️ متجر بريميوم ⚗️',
+    catalogue_title:'الكتالوج', produits_label:'منتجات', produit_label:'منتج',
+    filter_all_categories:'كل الفئات', filter_all_farms:'كل المزارع',
+    no_results:'لا توجد منتجات 🔍',
+    cart_title:'سلتك 🛒', cart_empty:'سلتك فارغة',
+    mode_label:'طريقة الاستلام:', mode_pickup:'الحضور شخصياً', mode_delivery:'توصيل',
+    pickup_time_label:'في أي وقت؟', delivery_time_label:'الوقت المفضل',
+    delivery_address_label:'العنوان الكامل', delivery_address_placeholder:'الشارع، الرقم، المدينة...',
+    delivery_details_label:'تفاصيل إضافية (الطابق، الرمز، إلخ)', delivery_details_placeholder:'اتصال داخلي، رمز الباب، ملاحظات...',
+    submit_order_btn:'اطلب الآن 🍬',
+    quantity_title:'اختر الكمية', add_to_cart_btn:'أضف إلى السلة', add_to_cart_restock_btn:'إعادة التخزين جارية...',
+    select_qty_alert:'يرجى اختيار الكمية!', added_to_cart_alert:'✅ تمت الإضافة إلى السلة!',
+    cart_empty_alert:'سلتك فارغة', select_mode_alert:'يرجى اختيار طريقة الاستلام.',
+    avis_title:'⭐ آراء العملاء', avis_leave_title:'أضف تقييمك', avis_note_label:'تقييمك',
+    avis_comment_label:'تعليقك', avis_comment_placeholder:'شاركنا تجربتك...',
+    avis_submit_btn:'نشر تقييمي ⭐', avis_empty:'لا توجد تقييمات بعد.',
+    avis_select_note_alert:'يرجى اختيار تقييم ⭐', avis_write_comment_alert:'يرجى كتابة تعليق',
+    avis_success_alert:'✅ شكراً لتقييمك!', avis_error_alert:'❌ خطأ أثناء النشر. حاول مجدداً.',
+    reseaux_title:'🔥 روابطنا',
+    profil_orders_count:'طلب (طلبات) تم إرسالها', profil_my_orders_title:'📦 طلباتي',
+    profil_view_orders_btn:'📦 عرض طلباتي', profil_hide_orders_btn:'🔽 إخفاء طلباتي',
+    profil_no_orders:'لا توجد طلبات بعد.', profil_language_title:'🌐 اللغة',
+    profil_invite:'ضيف'
+  },
+  it: {
+    nav_home:'Home', nav_cart:'Carrello', nav_avis:'Recensioni', nav_infos:'Info', nav_reseaux:'Link', nav_profil:'Profilo',
+    hero_tagline:'⚗️ PREMIUM TERPS SHOP ⚗️',
+    catalogue_title:'Catalogo', produits_label:'Prodotti', produit_label:'Prodotto',
+    filter_all_categories:'Tutte le categorie', filter_all_farms:'Tutte le farm',
+    no_results:'Nessun prodotto 🔍',
+    cart_title:'Il tuo carrello 🛒', cart_empty:'Il tuo carrello è vuoto',
+    mode_label:'Modalità di ritiro:', mode_pickup:'Vieni di persona', mode_delivery:'Consegna',
+    pickup_time_label:'A che ora?', delivery_time_label:'Ora preferita',
+    delivery_address_label:'Indirizzo completo', delivery_address_placeholder:'Via, numero, città...',
+    delivery_details_label:'Dettagli (piano, codice, ecc.)', delivery_details_placeholder:'Citofono, codice, note...',
+    submit_order_btn:'Ordina 🍬',
+    quantity_title:'Seleziona la quantità', add_to_cart_btn:'Aggiungi al carrello', add_to_cart_restock_btn:'RIFORNIMENTO IN CORSO...',
+    select_qty_alert:'Seleziona una quantità!', added_to_cart_alert:'✅ Aggiunto al carrello!',
+    cart_empty_alert:'Il tuo carrello è vuoto', select_mode_alert:'Scegli una modalità di ritiro.',
+    avis_title:'⭐ Recensioni clienti', avis_leave_title:'Lascia una recensione', avis_note_label:'La tua valutazione',
+    avis_comment_label:'Il tuo commento', avis_comment_placeholder:'Condividi la tua esperienza...',
+    avis_submit_btn:'Pubblica la mia recensione ⭐', avis_empty:'Ancora nessuna recensione.',
+    avis_select_note_alert:'Seleziona una valutazione ⭐', avis_write_comment_alert:'Scrivi un commento',
+    avis_success_alert:'✅ Grazie per la tua recensione!', avis_error_alert:'❌ Errore durante la pubblicazione. Riprova.',
+    reseaux_title:'🔥 I nostri link',
+    profil_orders_count:'ordine(i) effettuato(i)', profil_my_orders_title:'📦 I miei ordini',
+    profil_view_orders_btn:'📦 Vedi i miei ordini', profil_hide_orders_btn:'🔽 Nascondi i miei ordini',
+    profil_no_orders:'Ancora nessun ordine.', profil_language_title:'🌐 Lingua',
+    profil_invite:'Ospite'
+  },
+  es: {
+    nav_home:'Inicio', nav_cart:'Carrito', nav_avis:'Reseñas', nav_infos:'Info', nav_reseaux:'Enlaces', nav_profil:'Perfil',
+    hero_tagline:'⚗️ PREMIUM TERPS SHOP ⚗️',
+    catalogue_title:'Catálogo', produits_label:'Productos', produit_label:'Producto',
+    filter_all_categories:'Todas las categorías', filter_all_farms:'Todas las farms',
+    no_results:'Sin productos 🔍',
+    cart_title:'Tu carrito 🛒', cart_empty:'Tu carrito está vacío',
+    mode_label:'Modo de recogida:', mode_pickup:'Venir en persona', mode_delivery:'Entrega',
+    pickup_time_label:'¿A qué hora?', delivery_time_label:'Hora preferida',
+    delivery_address_label:'Dirección completa', delivery_address_placeholder:'Calle, número, ciudad...',
+    delivery_details_label:'Detalles (piso, código, etc.)', delivery_details_placeholder:'Portero automático, código, notas...',
+    submit_order_btn:'Pedir 🍬',
+    quantity_title:'Seleccionar cantidad', add_to_cart_btn:'Añadir al carrito', add_to_cart_restock_btn:'REPONIENDO STOCK...',
+    select_qty_alert:'¡Selecciona una cantidad!', added_to_cart_alert:'✅ ¡Añadido al carrito!',
+    cart_empty_alert:'Tu carrito está vacío', select_mode_alert:'Por favor elige un modo de recogida.',
+    avis_title:'⭐ Opiniones de clientes', avis_leave_title:'Dejar una reseña', avis_note_label:'Tu valoración',
+    avis_comment_label:'Tu comentario', avis_comment_placeholder:'Comparte tu experiencia...',
+    avis_submit_btn:'Publicar mi reseña ⭐', avis_empty:'Aún no hay reseñas.',
+    avis_select_note_alert:'Por favor selecciona una valoración ⭐', avis_write_comment_alert:'Por favor escribe un comentario',
+    avis_success_alert:'✅ ¡Gracias por tu reseña!', avis_error_alert:'❌ Error al publicar. Inténtalo de nuevo.',
+    reseaux_title:'🔥 Nuestros enlaces',
+    profil_orders_count:'pedido(s) realizado(s)', profil_my_orders_title:'📦 Mis pedidos',
+    profil_view_orders_btn:'📦 Ver mis pedidos', profil_hide_orders_btn:'🔽 Ocultar mis pedidos',
+    profil_no_orders:'Aún no hay pedidos.', profil_language_title:'🌐 Idioma',
+    profil_invite:'Invitado'
+  }
+};
+
+let currentLang = 'fr';
+try{ currentLang = localStorage.getItem('lang_dino76') || 'fr'; }catch(e){}
+if(!I18N[currentLang]) currentLang='fr';
+
+function t(key){
+  return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.fr[key]) || key;
+}
+
+function applyDirection(){
+  document.documentElement.setAttribute('dir', currentLang==='ar' ? 'rtl' : 'ltr');
+  document.documentElement.setAttribute('lang', currentLang);
+}
+
+function applyTranslations(){
+  applyDirection();
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    el.textContent=t(key);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    const key=el.getAttribute('data-i18n-placeholder');
+    el.setAttribute('placeholder', t(key));
+  });
+  // Éléments dynamiques qui ne sont pas re-rendus automatiquement au changement de langue
+  const catFilter=document.getElementById('category-filter');
+  const farmFilter=document.getElementById('farm-filter');
+  if(catFilter && catFilter.options.length){ catFilter.options[0].textContent=t('filter_all_categories'); }
+  if(farmFilter && farmFilter.options.length){ farmFilter.options[0].textContent=t('filter_all_farms'); }
+  if(typeof filterProducts==='function') filterProducts();
+  if(document.getElementById('cart-page') && document.getElementById('cart-page').style.display!=='none') renderCart();
+  if(document.getElementById('avis-page') && document.getElementById('avis-page').style.display!=='none') renderAvis();
+  if(document.getElementById('profil-page') && document.getElementById('profil-page').style.display!=='none') renderProfilPage();
+}
+
+function setLanguage(lang){
+  if(!I18N[lang]) return;
+  currentLang=lang;
+  try{ localStorage.setItem('lang_dino76', lang); }catch(e){}
+  applyTranslations();
+}
+window.setLanguage=setLanguage;
+// ============ FIN I18N ============
 
 // --- CLOUDINARY (upload d'IMAGES uniquement depuis le panel admin) ---
 // Les vidéos ne passent plus par Cloudinary : elles sont stockées en local,
@@ -956,7 +1148,7 @@ function populateFilters(){
   const cats=[...new Set(all.map(p=>p.category))].sort();
   const farms=[...new Set(all.map(p=>p.farm))].sort();
   const cs=document.getElementById('category-filter');const fs=document.getElementById('farm-filter');
-  cs.innerHTML='<option value="">Toutes catégories</option>';fs.innerHTML='<option value="">Toutes farms</option>';
+  cs.innerHTML=`<option value="">${t('filter_all_categories')}</option>`;fs.innerHTML=`<option value="">${t('filter_all_farms')}</option>`;
   cats.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;cs.appendChild(o);});
   farms.forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;fs.appendChild(o);});
 }
@@ -971,8 +1163,8 @@ function renderProducts(list){
   const grid=document.getElementById('products-grid');grid.innerHTML='';
   const n=list.length;const ce=document.getElementById('products-count-modern');
   ce.querySelector('.products-count-number').textContent=n;
-  ce.querySelector('.products-count-label').textContent=n>1?'Produits':'Produit';
-  if(n===0){grid.innerHTML='<div class="no-results">Aucun produit 🔍</div>';return;}
+  ce.querySelector('.products-count-label').textContent=n>1?t('produits_label'):t('produit_label');
+  if(n===0){grid.innerHTML=`<div class="no-results">${t('no_results')}</div>`;return;}
   list.forEach(p=>{
     const card=document.createElement('div');card.className='card';
     let mediaHTML;
@@ -1081,15 +1273,15 @@ function openProductDetail(key){
   const qtyGrid=document.getElementById('qty-grid');qtyGrid.innerHTML='';
   p.quantities.forEach((item,idx)=>{const btn=document.createElement('button');btn.className='qty-btn';btn.innerHTML=`${item.qty}<br><span class="price-new">${item.price}</span>`;btn.dataset.idx=idx;if(p.restock){btn.disabled=true;btn.style.opacity='0.3';btn.style.cursor='not-allowed';}else btn.onclick=()=>{qtyGrid.querySelectorAll('.qty-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');};qtyGrid.appendChild(btn);});
   const addBtn=document.getElementById('add-to-cart-btn');
-  if(p.restock){addBtn.disabled=true;addBtn.style.background='linear-gradient(135deg,#0e2a1b,#0a2416)';addBtn.style.color='#39ff8a';addBtn.style.border='1px solid rgba(57,255,138,0.3)';addBtn.style.cursor='not-allowed';addBtn.style.opacity='0.75';addBtn.innerHTML='<span class="restock-spin">⏳</span> RESTOCK EN COURS...';}
-  else{addBtn.disabled=false;addBtn.style.background='';addBtn.style.color='';addBtn.style.border='';addBtn.style.cursor='';addBtn.style.opacity='';addBtn.innerHTML='<span>🛒</span> Ajouter au Panier';}
+  if(p.restock){addBtn.disabled=true;addBtn.style.background='linear-gradient(135deg,#0e2a1b,#0a2416)';addBtn.style.color='#39ff8a';addBtn.style.border='1px solid rgba(57,255,138,0.3)';addBtn.style.cursor='not-allowed';addBtn.style.opacity='0.75';addBtn.innerHTML=`<span class="restock-spin">⏳</span> ${t('add_to_cart_restock_btn')}`;}
+  else{addBtn.disabled=false;addBtn.style.background='';addBtn.style.color='';addBtn.style.border='';addBtn.style.cursor='';addBtn.style.opacity='';addBtn.innerHTML=`<span>🛒</span> <span data-i18n="add_to_cart_btn">${t('add_to_cart_btn')}</span>`;}
   buildProductMedia(p.video||null, p.image||null);hideAllPages();document.getElementById('product-detail').style.display='flex';if(tg)tg.BackButton.show();scrollToTop();
 }
 
 document.getElementById('add-to-cart-btn').onclick=()=>{
-  const sel=document.querySelector('.qty-btn.selected');if(!sel){alert('Sélectionnez une quantité !');return;}
+  const sel=document.querySelector('.qty-btn.selected');if(!sel){alert(t('select_qty_alert'));return;}
   const title=document.getElementById('detail-title').textContent;const key=Object.keys(products).find(k=>products[k].title===title);
-  const item=products[key].quantities[parseInt(sel.dataset.idx)];cart.push({title,qty:item.qty,price:item.price});saveCart();alert('✅ Ajouté au panier !');
+  const item=products[key].quantities[parseInt(sel.dataset.idx)];cart.push({title,qty:item.qty,price:item.price});saveCart();alert(t('added_to_cart_alert'));
 };
 
 document.getElementById('nav-home').onclick=goToHome;
@@ -1104,22 +1296,22 @@ let selectedStar=0;
 document.querySelectorAll('.star').forEach(star=>{star.addEventListener('click',()=>{selectedStar=parseInt(star.dataset.v);document.querySelectorAll('.star').forEach(s=>{s.textContent=parseInt(s.dataset.v)<=selectedStar?'★':'☆';s.classList.toggle('on',parseInt(s.dataset.v)<=selectedStar);});});});
 function renderAvis(){
   const list=document.getElementById('avis-list');
-  if(!avisList.length){list.innerHTML='<p style="text-align:center;color:#8a6bc9;padding:30px 0;font-weight:700;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">Aucun avis pour l\'instant.</p>';return;}
+  if(!avisList.length){list.innerHTML=`<p style="text-align:center;color:#8a6bc9;padding:30px 0;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">${t('avis_empty')}</p>`;return;}
   list.innerHTML=avisList.map(a=>`<div class="avis-card"><div class="avis-header"><span class="avis-user">${a.user}</span><span style="font-size:0.95rem;letter-spacing:2px;color:var(--orange)">${'\u2605'.repeat(a.note)}${'\u2606'.repeat(5-a.note)}</span></div><div class="avis-date">${a.date}</div><div class="avis-comment">${a.comment}</div></div>`).join('');
 }
 document.getElementById('submit-avis-btn').onclick=async()=>{
-  const comment=document.getElementById('avis-text').value.trim();if(!selectedStar){alert('Veuillez sélectionner une note ⭐');return;}if(!comment){alert('Veuillez écrire un commentaire');return;}
+  const comment=document.getElementById('avis-text').value.trim();if(!selectedStar){alert(t('avis_select_note_alert'));return;}if(!comment){alert(t('avis_write_comment_alert'));return;}
   const username=tgUser?.first_name||tgUser?.username||'Anonyme';
   const avis={user:username,note:selectedStar,comment,date:new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}),timestamp:Date.now()};
   const btn=document.getElementById('submit-avis-btn');btn.disabled=true;btn.textContent='Publication...';
-  try{await window._fsAdd(window._fsCol(window._db,'avis'),avis);avisList.unshift(avis);document.getElementById('avis-text').value='';selectedStar=0;document.querySelectorAll('.star').forEach(s=>{s.textContent='☆';s.classList.remove('on');});renderAvis();alert('✅ Merci pour votre avis !');}
-  catch(e){console.error(e);alert('❌ Erreur lors de la publication. Réessaie.');}
-  finally{btn.disabled=false;btn.innerHTML='Publier mon avis ⭐';}
+  try{await window._fsAdd(window._fsCol(window._db,'avis'),avis);avisList.unshift(avis);document.getElementById('avis-text').value='';selectedStar=0;document.querySelectorAll('.star').forEach(s=>{s.textContent='☆';s.classList.remove('on');});renderAvis();alert(t('avis_success_alert'));}
+  catch(e){console.error(e);alert(t('avis_error_alert'));}
+  finally{btn.disabled=false;btn.innerHTML=t('avis_submit_btn');}
 };
 
 function renderCart(){
   const container=document.getElementById('cart-items');container.innerHTML='';
-  if(!cart.length){container.innerHTML='<p style="text-align:center;color:#8a6bc9;padding:40px 0;font-weight:700;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">Votre panier est vide</p>';document.getElementById('cart-total').textContent='';return;}
+  if(!cart.length){container.innerHTML=`<p style="text-align:center;color:#8a6bc9;padding:40px 0;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">${t('cart_empty')}</p>`;document.getElementById('cart-total').textContent='';return;}
   let total=0;cart.forEach((item,index)=>{total+=parseInt(item.price)||0;const div=document.createElement('div');div.className='cart-item';div.innerHTML=`<div><div class="cart-item-title">${item.title}</div><div class="cart-item-qty">${item.qty} — ${item.price}</div></div><button class="delete-btn" data-index="${index}">×</button>`;container.appendChild(div);});
   document.getElementById('cart-total').innerHTML=`Total : <strong>${total} €</strong>`;
 }
@@ -1278,34 +1470,71 @@ window.closeRouletteAndFinalize=function(){
 // ============ FIN LOGIQUE ROULETTE ============
 
 document.getElementById('submit-order-btn').onclick=()=>{
-  if(!cart.length){alert('Votre panier est vide');return;}
-  const modeBtn=document.querySelector('.questionnaire .option-btn.active');if(!modeBtn){alert('Veuillez choisir un mode de récupération.');return;}
+  if(!cart.length){alert(t('cart_empty_alert'));return;}
+  const modeBtn=document.querySelector('.questionnaire .option-btn.active');if(!modeBtn){alert(t('select_mode_alert'));return;}
   openRouletteBeforeOrder();
 };
 
 function finalizeOrder(){
-  if(!cart.length){alert('Votre panier est vide');return;}
-  const modeBtn=document.querySelector('.questionnaire .option-btn.active');if(!modeBtn){alert('Veuillez choisir un mode de récupération.');return;}
-  let modeLabel='';if(modeBtn.dataset.type==='pickup')modeLabel='Venir sur place';else modeLabel='Livraison';
+  if(!cart.length){alert(t('cart_empty_alert'));return;}
+  const modeBtn=document.querySelector('.questionnaire .option-btn.active');if(!modeBtn){alert(t('select_mode_alert'));return;}
+  const modeType=modeBtn.dataset.type;
+  let modeLabel='';if(modeType==='pickup')modeLabel='Venir sur place';else modeLabel='Livraison';
   const senderName=tgUser?.username?'@'+tgUser.username:(tgUser?.first_name||'Utilisateur');
   let message=`⚡️ *NOUVELLE COMMANDE — DrCNBNorth 59* ⚡️\n\n👤 ${senderName}\n📅 ${new Date().toLocaleString('fr-FR')}\n\n🛍️ *Articles :*\n`;
   let total=0;let itemsText='';
   cart.forEach(item=>{total+=parseInt(item.price)||0;message+=`• ${item.title} — ${item.qty} (${item.price})\n`;itemsText+=`• ${item.title} ${item.qty} (${item.price})\n`;});
   message+=`\n💰 *Total : ${total} €*\n\n📦 *Mode :* ${modeLabel}\n`;
-  if(modeBtn.dataset.type==='pickup'){const time=document.getElementById('pickup-time').value;if(time)message+=`\n🕐 Heure meet-up : ${time}`;}
-  else if(modeBtn.dataset.type==='delivery'){const time=document.getElementById('delivery-time').value;const address=document.getElementById('delivery-address').value.trim();const details=document.getElementById('delivery-details').value.trim();if(time)message+=`\n🕐 Heure livraison : ${time}`;if(address)message+=`\n📍 Adresse : ${address}`;if(details)message+=`\n📝 Détails : ${details}`;}
+  if(modeType==='pickup'){const time=document.getElementById('pickup-time').value;if(time)message+=`\n🕐 Heure meet-up : ${time}`;}
+  else if(modeType==='delivery'){const time=document.getElementById('delivery-time').value;const address=document.getElementById('delivery-address').value.trim();const details=document.getElementById('delivery-details').value.trim();if(time)message+=`\n🕐 Heure livraison : ${time}`;if(address)message+=`\n📍 Adresse : ${address}`;if(details)message+=`\n📝 Détails : ${details}`;}
   if(rouletteWonPrize){message+=`\n\n🎡 *Lot gagné à la roulette :* ${rouletteWonPrize.icon||'🎁'} ${rouletteWonPrize.name||''}`;}
   message+=`\n\nMerci ! 🙏`;
-  commandes.push({tgName:tgUser?.first_name||'Invité',items:itemsText.trim(),total,mode:modeLabel,date:new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}),prize:rouletteWonPrize?rouletteWonPrize.name:null});saveCommandes();
+  commandes.push({tgName:tgUser?.first_name||'Invité',items:itemsText.trim(),total,mode:modeLabel,modeType,date:new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}),prize:rouletteWonPrize?rouletteWonPrize.name:null});saveCommandes();
   const url=`https://t.me/@DrCNBNorth59?text=${encodeURIComponent(message)}`;if(tg)tg.openTelegramLink(url);else window.open(url,'_blank');
   rouletteWonPrize=null;
 }
 
+// ============ PROFIL : langue + commandes masquées derrière un bouton ============
+let profilOrdersVisible = false;
+
+function toggleProfilOrders(){
+  profilOrdersVisible = !profilOrdersVisible;
+  renderProfilPage();
+}
+window.toggleProfilOrders=toggleProfilOrders;
+
 function renderProfilPage(){
   const page=document.getElementById('profil-page');
-  const displayName=tgUser?(tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'')):'Invité';
+  const displayName=tgUser?(tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'')):t('profil_invite');
   const username=tgUser?.username?'@'+tgUser.username:'';const photoUrl=tgUser?.photo_url||'';
-  page.innerHTML=`<div class="profil-header"><div class="profil-avatar">${photoUrl?`<img src="${photoUrl}" alt="avatar">`:'<span>👤</span>'}</div><div class="profil-name">${displayName}</div>${username?`<div style="color:#8a6bc9;font-size:0.78rem;margin-top:2px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">${username}</div>`:''} ${tgUser?.id?`<div style="color:#6b4c9f;font-size:0.68rem;margin-top:3px;font-family:'Barlow Condensed',sans-serif;">ID Telegram: ${tgUser.id}</div>`:''}</div><div class="profil-stats-block"><div class="profil-stats-icon">📦</div><div><div class="profil-stats-number">${commandes.length}</div><div class="profil-stats-label">commande(s) passée(s)</div></div></div><div class="profil-section-title">📦 Mes commandes</div><div id="profil-commandes">${commandes.length===0?'<p style="color:#8a6bc9;text-align:center;padding:20px;font-size:0.88rem;font-weight:700;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:0.5px;">Aucune commande pour l\'instant.</p>':[...commandes].reverse().map(c=>`<div class="commande-card"><div class="commande-header"><span class="commande-date">${c.date}</span><span class="commande-total">${c.total} €</span></div><div class="commande-items">${c.items}</div><span class="commande-mode">${c.mode}</span>${c.prize?`<span class="commande-mode" style="background:rgba(176,38,255,0.10);border-color:rgba(176,38,255,0.25);color:var(--orange);margin-left:6px;">🎁 ${c.prize}</span>`:''}</div>`).join('')}</div>`;
+
+  const langButtonsHTML = Object.keys(LANGS).map(code=>{
+    const l=LANGS[code];
+    const active = code===currentLang ? 'active' : '';
+    return `<button type="button" class="lang-btn ${active}" onclick="setLanguage('${code}')"><span class="lang-flag">${l.flag}</span> ${l.label}</button>`;
+  }).join('');
+
+  let ordersInnerHTML;
+  if(!profilOrdersVisible){
+    ordersInnerHTML='';
+  } else if(commandes.length===0){
+    ordersInnerHTML=`<p style="color:#8a6bc9;text-align:center;padding:20px;font-size:0.88rem;font-weight:700;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px;">${t('profil_no_orders')}</p>`;
+  } else {
+    ordersInnerHTML=[...commandes].reverse().map(c=>{
+      const modeDisplay = c.modeType ? (c.modeType==='pickup'?t('mode_pickup'):t('mode_delivery')) : (c.mode||'');
+      return `<div class="commande-card"><div class="commande-header"><span class="commande-date">${c.date}</span><span class="commande-total">${c.total} €</span></div><div class="commande-items">${c.items}</div><span class="commande-mode">${modeDisplay}</span>${c.prize?`<span class="commande-mode" style="background:rgba(176,38,255,0.10);border-color:rgba(176,38,255,0.25);color:var(--orange);margin-left:6px;">🎁 ${c.prize}</span>`:''}</div>`;
+    }).join('');
+  }
+
+  const toggleLabel = profilOrdersVisible ? t('profil_hide_orders_btn') : t('profil_view_orders_btn');
+
+  page.innerHTML=`<div class="profil-header"><div class="profil-avatar">${photoUrl?`<img src="${photoUrl}" alt="avatar">`:'<span>👤</span>'}</div><div class="profil-name">${displayName}</div>${username?`<div style="color:#8a6bc9;font-size:0.78rem;margin-top:2px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">${username}</div>`:''} ${tgUser?.id?`<div style="color:#6b4c9f;font-size:0.68rem;margin-top:3px;font-family:'Barlow Condensed',sans-serif;">ID Telegram: ${tgUser.id}</div>`:''}</div>
+  <div class="profil-stats-block"><div class="profil-stats-icon">📦</div><div><div class="profil-stats-number">${commandes.length}</div><div class="profil-stats-label">${t('profil_orders_count')}</div></div></div>
+  <div class="profil-section-title">${t('profil_language_title')}</div>
+  <div class="lang-grid">${langButtonsHTML}</div>
+  <div class="profil-section-title">${t('profil_my_orders_title')}</div>
+  <button type="button" class="profil-toggle-btn" onclick="toggleProfilOrders()">${toggleLabel}</button>
+  <div id="profil-commandes">${ordersInnerHTML}</div>`;
 }
 
 document.querySelectorAll('.reseau-item[data-link]').forEach(el=>{el.onclick=()=>{const l=el.getAttribute('data-link');if(tg)tg.openLink(l);else window.open(l,'_blank');};});
@@ -1622,7 +1851,7 @@ window.saveAdminProduct=saveAdminProduct;window.openAdminForm=openAdminForm;wind
 function showAdminToast(msg){const t=document.getElementById('admin-toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
 document.addEventListener('DOMContentLoaded',()=>{
-  populateFilters();renderProducts();updateBadge();goToHome();
+  populateFilters();renderProducts();updateBadge();goToHome();applyTranslations();
   const splash=document.getElementById('splash-screen');
   setTimeout(()=>{splash.classList.add('hidden');setTimeout(()=>{splash.style.display='none';},700);},2600);
 });
