@@ -1653,7 +1653,7 @@ function finalizeOrder(){
   const modeType=modeBtn.dataset.type;
   let modeLabel='';if(modeType==='pickup')modeLabel='Venir sur place';else modeLabel='Livraison';
   const senderName=tgUser?.username?'@'+tgUser.username:(tgUser?.first_name||'Utilisateur');
-  let message=`⚡️ *NOUVELLE COMMANDE — DrCNBNorth 59* ⚡️\n\n👤 ${senderName}\n📅 ${new Date().toLocaleString('fr-FR')}\n\n🛍️ *Articles :*\n`;
+  let message=`⚡️ NOUVELLE COMMANDE — ALLO CARLOS 76 ⚡️\n\n👤 ${senderName}\n📅 ${new Date().toLocaleString('fr-FR')}\n\n🛍️ *Articles :*\n`;
   let total=0;let itemsText='';
   cart.forEach(item=>{total+=parseInt(item.price)||0;message+=`• ${item.title} — ${item.qty} (${item.price})\n`;itemsText+=`• ${item.title} ${item.qty} (${item.price})\n`;});
   message+=`\n💰 *Total : ${total} €*\n\n📦 *Mode :* ${modeLabel}\n`;
