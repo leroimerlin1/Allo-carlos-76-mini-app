@@ -227,6 +227,7 @@ nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;backgro
 .swiper-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(23,8,46,0.9);border:1px solid rgba(176,38,255,0.3);color:var(--orange);width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;}
 .swiper-btn-prev{left:12px;}.swiper-btn-next{right:12px;}
 .swiper-counter{position:absolute;bottom:10px;right:14px;background:rgba(23,8,46,0.9);border:1px solid rgba(176,38,255,0.25);border-radius:6px;padding:4px 12px;font-size:12px;font-weight:800;color:var(--orange);letter-spacing:1px;font-family:'Bangers',cursive;}
+.swiper-hint{position:absolute;bottom:10px;left:14px;background:rgba(23,8,46,0.9);border:1px solid rgba(176,38,255,0.25);border-radius:6px;padding:4px 12px;font-size:11px;font-weight:800;color:var(--orange-light);letter-spacing:1px;font-family:var(--font-body);text-transform:uppercase;pointer-events:none;transition:opacity 0.3s;}
 
 /* PANIER */
 #cart-page{padding:16px;display:none;}
@@ -623,7 +624,7 @@ textarea{min-height:80px;resize:vertical;}
           <video id="af-video-preview" src="" controls playsinline style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid rgba(176,38,255,0.25);display:block;background:#000;"></video>
         </div>
         <input type="text" id="af-video" class="admin-input" placeholder="ex: videos/produit1.mp4">
-        <div style="font-size:0.76rem;color:var(--cream-dim);margin-top:6px;">Place le fichier vidéo dans un dossier "videos" à côté du fichier HTML, puis indique ici son chemin relatif (ex: videos/produit1.mp4). Elle ne s'affiche sur la page d'accueil que si aucune image n'est renseignée.</div>
+        <div style="font-size:0.76rem;color:var(--cream-dim);margin-top:6px;">Place le fichier vidéo dans un dossier "videos" à côté du fichier HTML, puis indique ici son chemin relatif (ex: videos/produit1.mp4). Sur la page d'accueil, une image sera automatiquement extraite de cette vidéo (à la place de la vidéo qui jouait avant). Sur la fiche produit, l'image extraite et la vidéo seront toutes les deux disponibles, en swipant.</div>
       </div>
       <div class="admin-field">
         <label class="admin-label">Strains</label>
@@ -1001,7 +1002,59 @@ window.setLanguage=setLanguage;
 // Dans le panel admin, tu indiques simplement le chemin relatif du fichier
 // (ex: images/produit1.jpg pour l'image, videos/produit1.mp4 pour la vidéo).
 // Sur la page d'accueil : l'image est affichée en priorité ; si aucune image
-// n'est renseignée, la vidéo locale est utilisée à la place.
+// n'est renseignée, une image est automatiquement extraite de la vidéo locale
+// (une frame capturée) et utilisée comme aperçu à la place d'une vidéo qui
+// jouerait en boucle. Sur la fiche produit, on retrouve l'image (dédiée ou
+// extraite de la vidéo) et la vidéo complète dans un carrousel qu'on peut
+// swiper.
+
+// --- Extraction d'une frame vidéo en image (miniature) ---
+// Cache en mémoire pour éviter de régénérer la même miniature plusieurs fois
+// pendant la session (les données sont volatiles : elles seront régénérées
+// après un rechargement complet de la page, ce qui reste très rapide).
+const videoThumbCache = {};
+
+function generateVideoThumbnail(videoSrc){
+  if(!videoSrc) return Promise.reject(new Error('no video src'));
+  if(videoThumbCache[videoSrc]) return Promise.resolve(videoThumbCache[videoSrc]);
+  return new Promise((resolve, reject)=>{
+    const video=document.createElement('video');
+    video.src=videoSrc;
+    video.muted=true;
+    video.playsInline=true;
+    video.preload='auto';
+    let settled=false;
+    const fail=(err)=>{ if(settled)return; settled=true; video.removeAttribute('src'); video.load(); reject(err); };
+    const capture=()=>{
+      if(settled) return;
+      try{
+        const w=video.videoWidth||400, h=video.videoHeight||400;
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(video,0,0,w,h);
+        const dataUrl=canvas.toDataURL('image/jpeg',0.78);
+        settled=true;
+        videoThumbCache[videoSrc]=dataUrl;
+        video.removeAttribute('src'); video.load();
+        resolve(dataUrl);
+      }catch(err){ fail(err); }
+    };
+    video.addEventListener('loadedmetadata',()=>{
+      // On prend une frame un peu après le début (souvent plus représentative
+      // que la toute première image, parfois noire) sans dépasser la durée.
+      const dur=video.duration;
+      let target=0.8;
+      if(isFinite(dur) && dur>0){ target=Math.min(0.8, dur*0.15); }
+      try{ video.currentTime=target; }catch(e){ capture(); }
+    });
+    video.addEventListener('seeked', capture, {once:true});
+    video.addEventListener('error', ()=>fail(new Error('video load error')));
+    // Sécurité : si rien ne se déclenche après quelques secondes, on abandonne proprement.
+    setTimeout(()=>{ if(!settled) fail(new Error('timeout')); }, 6000);
+    video.load();
+  });
+}
 
 const BASE_PRODUCTS = {};
 
@@ -1148,12 +1201,12 @@ function renderProducts(list){
     let mediaHTML;
     if(p.image){
       // Image locale (fichier stocké à côté du HTML) affichée en priorité.
-      // Si le fichier est introuvable, on bascule automatiquement sur la vidéo (si dispo), sinon placeholder.
-      const fallback = p.video ? `this.outerHTML='<video src=\\'${p.video}\\' muted loop autoplay playsinline preload=\\'metadata\\'></video>'` : `this.style.display='none'`;
+      const fallback = p.video ? `this.setAttribute('data-video-thumb','${p.video}');this.removeAttribute('onerror');window.__loadCardVideoThumb(this)` : `this.style.display='none'`;
       mediaHTML=`<img class="card-img" src="${p.image}" alt="${p.title}" loading="lazy" onerror="${fallback}">`;
     } else if(p.video){
-      // Pas d'image renseignée : on affiche la vidéo locale en boucle, sans son, comme aperçu.
-      mediaHTML=`<video src="${p.video}" muted loop autoplay playsinline preload="metadata"></video>`;
+      // Pas d'image renseignée : on affiche une image extraite de la vidéo
+      // (une frame capturée), au lieu de faire jouer la vidéo en boucle.
+      mediaHTML=`<img class="card-img" data-video-thumb="${p.video}" alt="${p.title}" loading="lazy" style="background:linear-gradient(135deg,#1e0b3a,#0a0118);">`;
     } else {
       mediaHTML=`<div class="card-no-video">🎬</div>`;
     }
@@ -1161,7 +1214,22 @@ function renderProducts(list){
     card.innerHTML=`<div class="card-media">${mediaHTML}${restockBadge}<div class="manga-corner"></div><div class="card-overlay"><div class="card-title">${p.title}</div><div class="card-farm">${p.farm}</div></div></div>`;
     card.onclick=()=>openProductDetail(p.key);grid.appendChild(card);
   });
+  // Génère (ou récupère du cache) les miniatures pour toutes les vidéos sans image dédiée
+  grid.querySelectorAll('img[data-video-thumb]').forEach(img=>window.__loadCardVideoThumb(img));
 }
+
+window.__loadCardVideoThumb=function(img){
+  const src=img.getAttribute('data-video-thumb');
+  if(!src) return;
+  generateVideoThumbnail(src).then(dataUrl=>{
+    img.src=dataUrl;
+  }).catch(()=>{
+    // Si l'extraction échoue (vidéo inaccessible, format non supporté, etc.),
+    // on retombe sur un simple pictogramme plutôt que de laisser une image cassée.
+    const wrap=img.closest('.card-media');
+    if(wrap){ img.outerHTML='<div class="card-no-video">🎬</div>'; }
+  });
+};
 
 function renderReseauxPage(){
   const cont=document.getElementById('reseaux-list-container');
@@ -1220,25 +1288,83 @@ function scrollToTop(){document.querySelector('.content').scrollTo({top:0,behavi
 function goToHome(){hideAllPages();document.getElementById('home-page').style.display='block';document.getElementById('nav-home').classList.add('active');if(tg)tg.BackButton.hide();scrollToTop();}
 
 let swiperIndex=0,swiperItems=[];
+
+function updateSwiperCounter(){
+  const counter=document.getElementById('swiper-counter');
+  if(counter) counter.textContent=`${swiperIndex+1} / ${swiperItems.length}`;
+}
+
 function buildProductMedia(videoSrc, imageSrc){
   const track=document.getElementById('swiper-track');const counter=document.getElementById('swiper-counter');
   const btnPrev=document.querySelector('.swiper-btn-prev');const btnNext=document.querySelector('.swiper-btn-next');
   track.innerHTML='';swiperItems=[];swiperIndex=0;
+
+  // Slide 1 : l'image (dédiée si renseignée, sinon une frame extraite de la vidéo)
   if(imageSrc){
-    const img=document.createElement('img');img.src=imageSrc;img.alt='';img.style.cssText='flex-shrink:0;width:100%;height:100%;object-fit:cover;background:#0a0118;pointer-events:none;user-select:none;';
+    const img=document.createElement('img');
+    img.src=imageSrc;img.alt='';
+    img.style.cssText='flex-shrink:0;width:100%;height:100%;object-fit:cover;background:#0a0118;pointer-events:none;user-select:none;';
     track.appendChild(img);swiperItems.push('image');
   } else if(videoSrc){
-    const vid=document.createElement('video');vid.src=videoSrc;vid.controls=true;vid.playsInline=true;vid.loop=true;vid.muted=false;vid.style.cssText='flex-shrink:0;width:100%;height:100%;object-fit:cover;background:#0a0118;pointer-events:auto;';
+    const img=document.createElement('img');
+    img.alt='';
+    img.style.cssText='flex-shrink:0;width:100%;height:100%;object-fit:cover;background:linear-gradient(135deg,#1e0b3a,#0a0118);pointer-events:none;user-select:none;';
+    if(videoThumbCache[videoSrc]){
+      img.src=videoThumbCache[videoSrc];
+    } else {
+      generateVideoThumbnail(videoSrc).then(url=>{ img.src=url; }).catch(()=>{});
+    }
+    track.appendChild(img);swiperItems.push('image');
+  }
+
+  // Slide 2 : la vidéo complète (si disponible), à découvrir en swipant
+  if(videoSrc){
+    const vid=document.createElement('video');
+    vid.src=videoSrc;vid.controls=true;vid.playsInline=true;vid.loop=true;vid.muted=false;
+    vid.style.cssText='flex-shrink:0;width:100%;height:100%;object-fit:cover;background:#0a0118;pointer-events:auto;';
     track.appendChild(vid);swiperItems.push('video');
-  } else {
+  }
+
+  if(swiperItems.length===0){
     const ph=document.createElement('div');ph.style.cssText='flex-shrink:0;width:100%;height:100%;background:linear-gradient(135deg,#1e0b3a,#0a0118);display:flex;align-items:center;justify-content:center;font-size:4rem;';ph.textContent='🎬';track.appendChild(ph);swiperItems.push('placeholder');
   }
-  btnPrev.style.display='none';btnNext.style.display='none';counter.style.display='none';updateSwiperPosition();
+
+  const showNav = swiperItems.length>1;
+  btnPrev.style.display=showNav?'flex':'none';
+  btnNext.style.display=showNav?'flex':'none';
+  counter.style.display=showNav?'block':'none';
+  updateSwiperPosition();
 }
-function updateSwiperPosition(){const track=document.getElementById('swiper-track');track.style.transform=`translateX(-${swiperIndex*100}%)`;track.querySelectorAll('video').forEach(v=>v.pause());}
+function updateSwiperPosition(){
+  const track=document.getElementById('swiper-track');
+  track.style.transform=`translateX(-${swiperIndex*100}%)`;
+  track.querySelectorAll('video').forEach((v,i)=>{ if(i!==swiperIndex-( swiperItems[0]==='image'?1:0 )) {} });
+  track.querySelectorAll('video').forEach(v=>v.pause());
+  updateSwiperCounter();
+}
 function swiperPrev(){if(swiperItems.length<=1)return;swiperIndex=(swiperIndex-1+swiperItems.length)%swiperItems.length;updateSwiperPosition();}
 function swiperNext(){if(swiperItems.length<=1)return;swiperIndex=(swiperIndex+1)%swiperItems.length;updateSwiperPosition();}
 window.swiperPrev=swiperPrev;window.swiperNext=swiperNext;
+
+// Swipe tactile (glisser du doigt) en plus des boutons ‹ › pour naviguer
+// entre l'image et la vidéo sur la fiche produit.
+(function initSwiperTouch(){
+  const wrap=document.querySelector('.swiper-wrap');
+  if(!wrap) return;
+  let startX=0,startY=0,tracking=false;
+  wrap.addEventListener('touchstart',(e)=>{
+    if(swiperItems.length<=1) return;
+    startX=e.touches[0].clientX;startY=e.touches[0].clientY;tracking=true;
+  },{passive:true});
+  wrap.addEventListener('touchend',(e)=>{
+    if(!tracking) return;tracking=false;
+    const dx=e.changedTouches[0].clientX-startX;
+    const dy=e.changedTouches[0].clientY-startY;
+    if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){
+      if(dx<0) swiperNext(); else swiperPrev();
+    }
+  },{passive:true});
+})();
 
 function openProductDetail(key){
   const p=products[key];
