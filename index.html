@@ -610,21 +610,20 @@ textarea{min-height:80px;resize:vertical;}
         <input class="admin-input" id="af-farm" placeholder="ex: BNF 🏴‍☠️">
       </div>
       <div class="admin-field">
-        <label class="admin-label">Vidéo du produit (fichier local)</label>
+        <label class="admin-label">Image du produit (fichier local)</label>
+        <div id="af-image-preview-wrap" style="margin-bottom:10px;display:none;">
+          <img id="af-image-preview" src="" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid rgba(176,38,255,0.25);display:block;">
+        </div>
+        <input type="text" id="af-image" class="admin-input" placeholder="ex: images/produit1.jpg">
+        <div style="font-size:0.76rem;color:var(--cream-dim);margin-top:6px;">Place le fichier image dans un dossier "images" à côté du fichier HTML, puis indique ici son chemin relatif (ex: images/produit1.jpg). C'est cette image qui s'affiche en priorité sur la page d'accueil.</div>
+      </div>
+      <div class="admin-field">
+        <label class="admin-label">Vidéo du produit (fichier local, utilisée si aucune image)</label>
         <div id="af-video-preview-wrap" style="margin-bottom:10px;display:none;">
           <video id="af-video-preview" src="" controls playsinline style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid rgba(176,38,255,0.25);display:block;background:#000;"></video>
         </div>
         <input type="text" id="af-video" class="admin-input" placeholder="ex: videos/produit1.mp4">
-        <div style="font-size:0.76rem;color:var(--cream-dim);margin-top:6px;">Place le fichier vidéo dans un dossier "videos" à côté du fichier HTML, puis indique ici son chemin relatif (ex: videos/produit1.mp4).</div>
-      </div>
-      <div class="admin-field">
-        <label class="admin-label">Image du produit</label>
-        <div id="af-image-preview-wrap" style="margin-bottom:10px;display:none;">
-          <img id="af-image-preview" src="" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;border:1px solid rgba(176,38,255,0.25);display:block;">
-        </div>
-        <input type="file" accept="image/*" id="af-image-file" class="admin-input" style="padding:9px;">
-        <div id="af-image-upload-status" style="font-size:0.78rem;color:var(--cream-dim);margin-top:6px;min-height:14px;"></div>
-        <input type="hidden" id="af-image">
+        <div style="font-size:0.76rem;color:var(--cream-dim);margin-top:6px;">Place le fichier vidéo dans un dossier "videos" à côté du fichier HTML, puis indique ici son chemin relatif (ex: videos/produit1.mp4). Elle ne s'affiche sur la page d'accueil que si aucune image n'est renseignée.</div>
       </div>
       <div class="admin-field">
         <label class="admin-label">Strains</label>
@@ -997,33 +996,12 @@ function setLanguage(lang){
 window.setLanguage=setLanguage;
 // ============ FIN I18N ============
 
-// --- CLOUDINARY (upload d'IMAGES uniquement depuis le panel admin) ---
-// Les vidéos ne passent plus par Cloudinary : elles sont stockées en local,
-// à côté du fichier HTML (voir champ "Vidéo du produit" dans le formulaire admin).
-// 👉 Remplace ces deux valeurs par celles de TON compte Cloudinary :
-// 1. Crée un compte gratuit sur https://cloudinary.com
-// 2. Dans Dashboard, note ton "Cloud name"
-// 3. Va dans Settings > Upload > Upload presets > Add upload preset
-//    - Signing Mode : "Unsigned"
-//    - Sauvegarde et copie le nom du preset
-const CLOUDINARY_CLOUD_NAME = 'dehgtflrt';
-const CLOUDINARY_UPLOAD_PRESET = 'DrCNBNorth59';
-
-async function uploadImageToCloudinary(file){
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
-    method: 'POST',
-    body: formData
-  });
-  if(!res.ok){
-    const errText = await res.text();
-    throw new Error('Upload échoué: ' + errText);
-  }
-  const data = await res.json();
-  return data.secure_url;
-}
+// --- IMAGES & VIDÉOS : tout est en local, à côté du fichier HTML ---
+// Il n'y a plus d'upload vers un service externe (Cloudinary supprimé).
+// Dans le panel admin, tu indiques simplement le chemin relatif du fichier
+// (ex: images/produit1.jpg pour l'image, videos/produit1.mp4 pour la vidéo).
+// Sur la page d'accueil : l'image est affichée en priorité ; si aucune image
+// n'est renseignée, la vidéo locale est utilisée à la place.
 
 const BASE_PRODUCTS = {};
 
@@ -1168,12 +1146,14 @@ function renderProducts(list){
   list.forEach(p=>{
     const card=document.createElement('div');card.className='card';
     let mediaHTML;
-    if(p.video){
-      // Vidéo locale (fichier stocké à côté du HTML) affichée directement en boucle,
-      // sans son, comme aperçu sur la page d'accueil.
+    if(p.image){
+      // Image locale (fichier stocké à côté du HTML) affichée en priorité.
+      // Si le fichier est introuvable, on bascule automatiquement sur la vidéo (si dispo), sinon placeholder.
+      const fallback = p.video ? `this.outerHTML='<video src=\\'${p.video}\\' muted loop autoplay playsinline preload=\\'metadata\\'></video>'` : `this.style.display='none'`;
+      mediaHTML=`<img class="card-img" src="${p.image}" alt="${p.title}" loading="lazy" onerror="${fallback}">`;
+    } else if(p.video){
+      // Pas d'image renseignée : on affiche la vidéo locale en boucle, sans son, comme aperçu.
       mediaHTML=`<video src="${p.video}" muted loop autoplay playsinline preload="metadata"></video>`;
-    } else if(p.image){
-      mediaHTML=`<img class="card-img" src="${p.image}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'">`;
     } else {
       mediaHTML=`<div class="card-no-video">🎬</div>`;
     }
@@ -1244,12 +1224,12 @@ function buildProductMedia(videoSrc, imageSrc){
   const track=document.getElementById('swiper-track');const counter=document.getElementById('swiper-counter');
   const btnPrev=document.querySelector('.swiper-btn-prev');const btnNext=document.querySelector('.swiper-btn-next');
   track.innerHTML='';swiperItems=[];swiperIndex=0;
-  if(videoSrc){
-    const vid=document.createElement('video');vid.src=videoSrc;vid.controls=true;vid.playsInline=true;vid.loop=true;vid.muted=false;vid.style.cssText='flex-shrink:0;width:100%;height:100%;object-fit:cover;background:#0a0118;pointer-events:auto;';
-    track.appendChild(vid);swiperItems.push('video');
-  } else if(imageSrc){
+  if(imageSrc){
     const img=document.createElement('img');img.src=imageSrc;img.alt='';img.style.cssText='flex-shrink:0;width:100%;height:100%;object-fit:cover;background:#0a0118;pointer-events:none;user-select:none;';
     track.appendChild(img);swiperItems.push('image');
+  } else if(videoSrc){
+    const vid=document.createElement('video');vid.src=videoSrc;vid.controls=true;vid.playsInline=true;vid.loop=true;vid.muted=false;vid.style.cssText='flex-shrink:0;width:100%;height:100%;object-fit:cover;background:#0a0118;pointer-events:auto;';
+    track.appendChild(vid);swiperItems.push('video');
   } else {
     const ph=document.createElement('div');ph.style.cssText='flex-shrink:0;width:100%;height:100%;background:linear-gradient(135deg,#1e0b3a,#0a0118);display:flex;align-items:center;justify-content:center;font-size:4rem;';ph.textContent='🎬';track.appendChild(ph);swiperItems.push('placeholder');
   }
@@ -1746,8 +1726,6 @@ let adminRestockValue=false;
 function openAdminForm(key){
   const formSection=document.getElementById('admin-form-section');formSection.style.display='block';formSection.scrollIntoView({behavior:'smooth'});
   document.getElementById('admin-edit-key').value=key||'';
-  document.getElementById('af-image-file').value='';
-  document.getElementById('af-image-upload-status').textContent='';
   if(key){
     document.getElementById('admin-form-title').textContent='✏️ Modifier le produit';
     const p=products[key];
@@ -1788,25 +1766,17 @@ function setRestockAdmin(val){adminRestockValue=val;updateRestockButtons();}
 function updateRestockButtons(){document.getElementById('restock-no').classList.toggle('active',!adminRestockValue);document.getElementById('restock-yes').classList.toggle('active',adminRestockValue);}
 window.setRestockAdmin=setRestockAdmin;
 
-document.getElementById('af-image-file').addEventListener('change', async (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const status = document.getElementById('af-image-upload-status');
+// Champ image local : quand l'admin tape/colle un chemin de fichier (ex: images/produit1.jpg),
+// on met à jour l'aperçu image directement, sans passer par un upload externe.
+document.getElementById('af-image').addEventListener('input', (e)=>{
+  const path = e.target.value.trim();
   const preview = document.getElementById('af-image-preview');
   const previewWrap = document.getElementById('af-image-preview-wrap');
-  status.textContent = '⏳ Upload en cours...';
-  status.style.color = 'var(--orange)';
-  try{
-    const url = await uploadImageToCloudinary(file);
-    document.getElementById('af-image').value = url;
-    preview.src = url;
+  if(path){
+    preview.src = path;
     previewWrap.style.display = 'block';
-    status.textContent = '✅ Image uploadée avec succès !';
-    status.style.color = 'var(--green-light)';
-  }catch(err){
-    console.error(err);
-    status.textContent = '❌ Erreur upload (vérifie ton cloud name / preset Cloudinary)';
-    status.style.color = '#ff4422';
+  } else {
+    previewWrap.style.display = 'none';
   }
 });
 
