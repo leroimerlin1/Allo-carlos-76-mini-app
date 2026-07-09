@@ -205,6 +205,9 @@ nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;backgro
 
 /* PRODUCT DETAIL */
 #product-detail{display:none;flex-direction:column;height:100dvh;background:var(--bg-dark);position:relative;}
+.product-detail-logo-bar{display:flex;align-items:center;justify-content:center;padding:14px 16px 10px;background:linear-gradient(180deg, rgba(176,38,255,0.14) 0%, rgba(10,1,24,0) 100%);border-bottom:1px solid rgba(176,38,255,0.15);flex-shrink:0;}
+.product-detail-logo-ring{width:54px;height:54px;border-radius:50%;overflow:hidden;border:2px solid rgba(176,38,255,0.35);box-shadow:0 0 0 4px rgba(176,38,255,0.10), 0 0 16px rgba(0,229,255,0.22);flex-shrink:0;}
+.product-detail-logo-ring img{width:100%;height:100%;object-fit:cover;display:block;}
 .product-info{flex:1;background:linear-gradient(180deg,#1e0b3a 0%,#0a0118 100%);overflow-y:auto;padding-bottom:90px;}
 .product-title{padding:20px 16px 8px;font-family:'Bangers',cursive;font-size:2rem;font-weight:400;color:var(--orange-light);text-shadow:3px 3px 0 rgba(176,38,255,0.6),0 0 24px rgba(57,255,138,0.55);letter-spacing:2px;line-height:1.2;}
 .badges{padding:0 16px 12px;display:flex;flex-wrap:wrap;gap:8px;}
@@ -302,6 +305,7 @@ textarea{min-height:80px;resize:vertical;}
 .profil-avatar{width:72px;height:72px;background:rgba(176,38,255,0.12);border:1px solid rgba(176,38,255,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 10px;overflow:hidden;}
 .profil-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .profil-name{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;color:var(--white);margin-bottom:2px;}
+.profil-member-since{color:var(--orange-light);font-size:0.8rem;margin-top:6px;font-weight:800;font-family:var(--font-body);letter-spacing:0.5px;}
 .profil-section-title{font-family:'Bangers',cursive;font-size:0.9rem;font-weight:400;color:var(--orange);letter-spacing:3px;text-transform:uppercase;margin:16px 0 8px;}
 .profil-stats-block{background:var(--bg-card);border:1px solid rgba(176,38,255,0.18);border-radius:16px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;box-shadow:0 6px 22px rgba(0,0,0,0.6);}
 .profil-stats-icon{width:48px;height:48px;background:rgba(176,38,255,0.10);border:1px solid rgba(176,38,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
@@ -846,7 +850,12 @@ const I18N = {
     profil_orders_count:'commande(s) passée(s)', profil_my_orders_title:'📦 Mes commandes',
     profil_view_orders_btn:'📦 Voir mes commandes', profil_hide_orders_btn:'🔽 Masquer mes commandes',
     profil_no_orders:"Aucune commande pour l'instant.", profil_language_title:'🌐 Langue',
-    profil_invite:'Invité'
+    profil_invite:'Invité',
+    profil_member_since:'Membre depuis',
+    member_today:"aujourd'hui",
+    member_days:'{n} jour(s)',
+    member_months:'{n} mois',
+    member_years:'{n} an(s)'
   },
   en: {
     nav_home:'Home', nav_cart:'Cart', nav_avis:'Reviews', nav_infos:'Info', nav_reseaux:'Links', nav_profil:'Profile',
@@ -872,7 +881,12 @@ const I18N = {
     profil_orders_count:'order(s) placed', profil_my_orders_title:'📦 My orders',
     profil_view_orders_btn:'📦 View my orders', profil_hide_orders_btn:'🔽 Hide my orders',
     profil_no_orders:'No orders yet.', profil_language_title:'🌐 Language',
-    profil_invite:'Guest'
+    profil_invite:'Guest',
+    profil_member_since:'Member since',
+    member_today:'today',
+    member_days:'{n} day(s)',
+    member_months:'{n} month(s)',
+    member_years:'{n} year(s)'
   },
   ar: {
     nav_home:'الرئيسية', nav_cart:'السلة', nav_avis:'التقييمات', nav_infos:'معلومات', nav_reseaux:'الروابط', nav_profil:'الملف الشخصي',
@@ -898,7 +912,12 @@ const I18N = {
     profil_orders_count:'طلب (طلبات) تم إرسالها', profil_my_orders_title:'📦 طلباتي',
     profil_view_orders_btn:'📦 عرض طلباتي', profil_hide_orders_btn:'🔽 إخفاء طلباتي',
     profil_no_orders:'لا توجد طلبات بعد.', profil_language_title:'🌐 اللغة',
-    profil_invite:'ضيف'
+    profil_invite:'ضيف',
+    profil_member_since:'عضو منذ',
+    member_today:'اليوم',
+    member_days:'{n} يوم',
+    member_months:'{n} شهر',
+    member_years:'{n} سنة'
   },
   it: {
     nav_home:'Home', nav_cart:'Carrello', nav_avis:'Recensioni', nav_infos:'Info', nav_reseaux:'Link', nav_profil:'Profilo',
@@ -924,7 +943,12 @@ const I18N = {
     profil_orders_count:'ordine(i) effettuato(i)', profil_my_orders_title:'📦 I miei ordini',
     profil_view_orders_btn:'📦 Vedi i miei ordini', profil_hide_orders_btn:'🔽 Nascondi i miei ordini',
     profil_no_orders:'Ancora nessun ordine.', profil_language_title:'🌐 Lingua',
-    profil_invite:'Ospite'
+    profil_invite:'Ospite',
+    profil_member_since:'Membro da',
+    member_today:'oggi',
+    member_days:'{n} giorno/i',
+    member_months:'{n} mese/i',
+    member_years:'{n} anno/i'
   },
   es: {
     nav_home:'Inicio', nav_cart:'Carrito', nav_avis:'Reseñas', nav_infos:'Info', nav_reseaux:'Enlaces', nav_profil:'Perfil',
@@ -950,7 +974,12 @@ const I18N = {
     profil_orders_count:'pedido(s) realizado(s)', profil_my_orders_title:'📦 Mis pedidos',
     profil_view_orders_btn:'📦 Ver mis pedidos', profil_hide_orders_btn:'🔽 Ocultar mis pedidos',
     profil_no_orders:'Aún no hay pedidos.', profil_language_title:'🌐 Idioma',
-    profil_invite:'Invitado'
+    profil_invite:'Invitado',
+    profil_member_since:'Miembro desde',
+    member_today:'hoy',
+    member_days:'{n} día(s)',
+    member_months:'{n} mes(es)',
+    member_years:'{n} año(s)'
   }
 };
 
@@ -1153,6 +1182,43 @@ window.initRouletteRealtime = function(){
     }, (err) => { console.error('Erreur de synchronisation roulette Firestore', err); });
   }catch(e){ console.error('initRouletteRealtime error', e); }
 };
+
+// --- PROFIL : date d'inscription (première visite) stockée dans Firestore (collection "users") ---
+let memberSinceTs = null;
+
+async function ensureMemberSince(){
+  const uid = getRouletteUserId();
+  try{
+    const ref = window._fsDoc(window._db,'users',uid);
+    const snap = await window._fsGetDoc(ref);
+    if(snap.exists()){
+      memberSinceTs = snap.data().createdAt || Date.now();
+    } else {
+      const now = Date.now();
+      await window._fsSet(ref, {
+        createdAt: now,
+        firstName: tgUser?.first_name || null,
+        username: tgUser?.username || null
+      });
+      memberSinceTs = now;
+    }
+  }catch(e){
+    console.error('ensureMemberSince error', e);
+    memberSinceTs = memberSinceTs || Date.now();
+  }
+  renderProfilPage();
+}
+
+function formatMembershipDuration(ts){
+  if(!ts) return '...';
+  const days = Math.floor((Date.now() - ts) / (1000*60*60*24));
+  if(days < 1) return t('member_today');
+  if(days < 30) return t('member_days').replace('{n}', days);
+  const months = Math.floor(days / 30);
+  if(months < 12) return t('member_months').replace('{n}', months);
+  const years = Math.floor(months / 12);
+  return t('member_years').replace('{n}', years);
+}
 
 let cart=[];
 try{cart=JSON.parse(localStorage.getItem('cart_dino76'))||[];}catch(e){cart=[];}
@@ -1614,6 +1680,9 @@ function renderProfilPage(){
   const displayName=tgUser?(tgUser.first_name+(tgUser.last_name?' '+tgUser.last_name:'')):t('profil_invite');
   const username=tgUser?.username?'@'+tgUser.username:'';const photoUrl=tgUser?.photo_url||'';
 
+  if(memberSinceTs===null){ ensureMemberSince(); }
+  const memberSinceHTML = `<div class="profil-member-since">🕒 ${t('profil_member_since')} ${formatMembershipDuration(memberSinceTs)}</div>`;
+
   const langButtonsHTML = Object.keys(LANGS).map(code=>{
     const l=LANGS[code];
     const active = code===currentLang ? 'active' : '';
@@ -1634,7 +1703,9 @@ function renderProfilPage(){
 
   const toggleLabel = profilOrdersVisible ? t('profil_hide_orders_btn') : t('profil_view_orders_btn');
 
-  page.innerHTML=`<div class="profil-header"><div class="profil-avatar">${photoUrl?`<img src="${photoUrl}" alt="avatar">`:'<span>👤</span>'}</div><div class="profil-name">${displayName}</div>${username?`<div style="color:#8a6bc9;font-size:0.78rem;margin-top:2px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">${username}</div>`:''} ${tgUser?.id?`<div style="color:#6b4c9f;font-size:0.68rem;margin-top:3px;font-family:'Barlow Condensed',sans-serif;">ID Telegram: ${tgUser.id}</div>`:''}</div>
+  page.innerHTML=`<div class="profil-header"><div class="profil-avatar">${photoUrl?`<img src="${photoUrl}" alt="avatar">`:'<span>👤</span>'}</div><div class="profil-name">${displayName}</div>${username?`<div style="color:#8a6bc9;font-size:0.78rem;margin-top:2px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;">${username}</div>`:''}
+  ${memberSinceHTML}
+  ${tgUser?.id?`<div style="color:#6b4c9f;font-size:0.68rem;margin-top:3px;font-family:'Barlow Condensed',sans-serif;">ID Telegram: ${tgUser.id}</div>`:''}</div>
   <div class="profil-stats-block"><div class="profil-stats-icon">📦</div><div><div class="profil-stats-number">${commandes.length}</div><div class="profil-stats-label">${t('profil_orders_count')}</div></div></div>
   <div class="profil-section-title">${t('profil_language_title')}</div>
   <div class="lang-grid">${langButtonsHTML}</div>
