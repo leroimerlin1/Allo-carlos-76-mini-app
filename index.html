@@ -119,6 +119,18 @@ body::before{
 @keyframes loadBar{0%{width:0%;}60%{width:72%;}100%{width:100%;}}
 .splash-loading-txt{color:rgba(185,140,255,0.6);font-size:0.72rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;z-index:3;margin-top:12px;animation:fadeSlideUp 0.5s 0.7s ease both;font-family:var(--font-body);}
 
+/* CITY SELECT */
+#city-select-screen{display:none;position:fixed;inset:0;z-index:9998;background:#0a0118;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+#city-select-screen.open{display:flex;}
+.city-select-title{font-family:'Bangers',cursive;font-size:1.8rem;letter-spacing:3px;color:var(--white);text-shadow:2px 2px 0 var(--red-dark),0 0 20px rgba(176,38,255,0.5);margin-bottom:8px;text-align:center;}
+.city-select-sub{font-size:0.85rem;font-weight:700;color:var(--cream-dim);letter-spacing:1px;margin-bottom:30px;text-align:center;font-family:var(--font-body);text-transform:uppercase;}
+.city-select-grid{display:flex;flex-direction:column;gap:16px;width:100%;max-width:320px;}
+.city-select-btn{display:flex;align-items:center;gap:16px;background:var(--bg-card);border:1px solid rgba(176,38,255,0.25);border-radius:18px;padding:20px;cursor:pointer;box-shadow:var(--glow-card);transition:all .2s;}
+.city-select-btn:active{transform:scale(0.96);border-color:rgba(0,229,255,0.4);}
+.city-select-flag{font-size:2.4rem;line-height:1;}
+.city-select-name{font-family:'Bangers',cursive;font-size:1.3rem;color:var(--white);letter-spacing:2px;}
+.city-switch-chip{cursor:pointer;}
+
 /* LAYOUT */
 .container{position:relative;height:100dvh;width:100%;background:var(--bg-dark);}
 .content{position:relative;z-index:2;height:100dvh;width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:90px;}
@@ -357,6 +369,7 @@ textarea{min-height:80px;resize:vertical;}
 .btn-save{flex:1;padding:14px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:var(--white);border:1px solid rgba(57,255,138,0.2);border-radius:12px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;cursor:pointer;}
 .btn-cancel{padding:14px 18px;background:rgba(255,255,255,0.04);border:1px solid rgba(176,38,255,0.14);color:#8a6bc9;border-radius:12px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;cursor:pointer;}
 .admin-restock-on{color:#39ff8a;font-size:0.74rem;font-weight:800;background:rgba(57,255,138,0.10);border:1px solid rgba(57,255,138,0.25);padding:3px 10px;border-radius:4px;display:inline-flex;align-items:center;gap:4px;font-family:var(--font-body);letter-spacing:0.5px;}
+.admin-city-badge{color:#00e5ff;font-size:0.74rem;font-weight:800;background:rgba(0,229,255,0.10);border:1px solid rgba(0,229,255,0.25);padding:3px 10px;border-radius:4px;display:inline-flex;align-items:center;gap:4px;font-family:var(--font-body);letter-spacing:0.5px;}
 .admin-add-btn{width:100%;padding:14px;background:linear-gradient(135deg,rgba(176,38,255,0.14),rgba(0,229,255,0.10));border:1px dashed rgba(176,38,255,0.3);color:var(--orange);border-radius:14px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px;}
 
 #admin-login{display:none;position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,0.99);flex-direction:column;align-items:center;justify-content:center;padding:30px;}
@@ -422,6 +435,22 @@ textarea{min-height:80px;resize:vertical;}
   </div>
 </div>
 
+<!-- CITY SELECT -->
+<div id="city-select-screen">
+  <div class="city-select-title">📍 CHOISIS TON MENU</div>
+  <div class="city-select-sub">Sélectionne ta ville pour voir les produits disponibles</div>
+  <div class="city-select-grid">
+    <div class="city-select-btn" onclick="selectCity('rouen')">
+      <span class="city-select-flag">🇫🇷</span>
+      <span class="city-select-name">ROUEN</span>
+    </div>
+    <div class="city-select-btn" onclick="selectCity('espagne')">
+      <span class="city-select-flag">🇪🇸</span>
+      <span class="city-select-name">ESPAGNE</span>
+    </div>
+  </div>
+</div>
+
 <!-- ADMIN LOGIN -->
 <div id="admin-login">
   <div class="admin-login-box">
@@ -484,6 +513,14 @@ textarea{min-height:80px;resize:vertical;}
       <span>➕</span> Ajouter un produit
     </button>
     <div class="admin-section-title">📦 Produits actuels</div>
+    <div class="admin-field" style="margin-bottom:14px;">
+      <label class="admin-label">Filtrer par ville</label>
+      <select id="admin-city-filter" class="compact-select" onchange="renderAdminProductsList()" style="width:100%;">
+        <option value="rouen">🇫🇷 Rouen</option>
+        <option value="espagne">🇪🇸 Espagne</option>
+        <option value="all">🌍 Toutes les villes</option>
+      </select>
+    </div>
     <div id="admin-products-list"></div>
   </div>
   <div class="admin-section">
@@ -603,6 +640,14 @@ textarea{min-height:80px;resize:vertical;}
       <div class="admin-form-title" id="admin-form-title">✏️ Nouveau produit</div>
       <input type="hidden" id="admin-edit-key">
       <div class="admin-field">
+        <label class="admin-label">Ville / Menu</label>
+        <select class="admin-input" id="af-city">
+          <option value="rouen">🇫🇷 Rouen</option>
+          <option value="espagne">🇪🇸 Espagne</option>
+        </select>
+        <div style="font-size:0.76rem;color:var(--cream-dim);margin-top:6px;">Choisis dans quel menu ce produit doit apparaître. Un produit Rouen n'apparaîtra jamais dans le menu Espagne, et inversement.</div>
+      </div>
+      <div class="admin-field">
         <label class="admin-label">Titre du produit</label>
         <input class="admin-input" id="af-title" placeholder="ex: 🍫 Dry Black">
       </div>
@@ -674,7 +719,7 @@ textarea{min-height:80px;resize:vertical;}
         <div class="hero-strip">
           <span class="hero-chip">76</span>
           <span class="hero-chip">✨ TERPS HIGH</span>
-          <span class="hero-chip">🔮 QUALITY</span>
+          <span class="hero-chip city-switch-chip" id="city-switch-chip" onclick="openCitySwitch()">📍 —</span>
         </div>
       </div>
       <div style="height:14px"></div>
@@ -1026,6 +1071,40 @@ function setLanguage(lang){
 window.setLanguage=setLanguage;
 // ============ FIN I18N ============
 
+// ============ CITY (menu) : Rouen vs Espagne ============
+let currentCity = null;
+try{ currentCity = localStorage.getItem('city_dino76') || null; }catch(e){}
+if(currentCity !== 'rouen' && currentCity !== 'espagne') currentCity = null;
+
+function selectCity(city){
+  if(city!=='rouen' && city!=='espagne') return;
+  currentCity = city;
+  try{ localStorage.setItem('city_dino76', city); }catch(e){}
+  document.getElementById('city-select-screen').classList.remove('open');
+  updateCityChip();
+  renderEverythingProducts();
+  goToHome();
+}
+window.selectCity = selectCity;
+
+function openCitySwitch(){
+  document.getElementById('city-select-screen').classList.add('open');
+}
+window.openCitySwitch = openCitySwitch;
+
+function updateCityChip(){
+  const chip=document.getElementById('city-switch-chip');
+  if(!chip) return;
+  if(currentCity==='espagne') chip.textContent='🇪🇸 ESPAGNE';
+  else if(currentCity==='rouen') chip.textContent='🇫🇷 ROUEN';
+  else chip.textContent='📍 Choisir';
+}
+
+function cityLabel(city){
+  return city==='espagne' ? '🇪🇸 Espagne' : '🇫🇷 Rouen';
+}
+// ============ FIN CITY ============
+
 // --- IMAGES & VIDÉOS : tout est en local, à côté du fichier HTML ---
 // Il n'y a plus d'upload vers un service externe (Cloudinary supprimé).
 // Dans le panel admin, tu indiques simplement le chemin relatif du fichier
@@ -1090,6 +1169,8 @@ const BASE_PRODUCTS = {};
 // --- PRODUITS : stockage partagé via Firestore (collection "products") ---
 // Tous les utilisateurs lisent la même collection, donc tout le monde voit
 // les mêmes produits que ceux ajoutés/modifiés depuis le panel admin.
+// Chaque produit possède un champ "city" ('rouen' ou 'espagne') qui détermine
+// dans quel menu il apparaît côté client.
 let products = {}; // rempli en temps réel par le listener Firestore
 
 function renderEverythingProducts(){
@@ -1241,7 +1322,7 @@ try{commandes=JSON.parse(localStorage.getItem('commandes_dino76'))||[];}catch(e)
 function saveCommandes(){try{localStorage.setItem('commandes_dino76',JSON.stringify(commandes));}catch(e){}}
 
 function populateFilters(){
-  const all=Object.values(products);
+  const all=Object.values(products).filter(p=>(p.city||'rouen')===currentCity);
   const cats=[...new Set(all.map(p=>p.category))].sort();
   const farms=[...new Set(all.map(p=>p.farm))].sort();
   const cs=document.getElementById('category-filter');const fs=document.getElementById('farm-filter');
@@ -1251,12 +1332,12 @@ function populateFilters(){
 }
 function filterProducts(){
   const cf=document.getElementById('category-filter').value;const ff=document.getElementById('farm-filter').value;
-  renderProducts(Object.values(products).filter(p=>(!cf||p.category===cf)&&(!ff||p.farm===ff)));
+  renderProducts(Object.values(products).filter(p=>(p.city||'rouen')===currentCity&&(!cf||p.category===cf)&&(!ff||p.farm===ff)));
 }
 window.filterProducts=filterProducts;
 
 function renderProducts(list){
-  if(!list)list=Object.values(products);
+  if(!list)list=Object.values(products).filter(p=>(p.city||'rouen')===currentCity);
   const grid=document.getElementById('products-grid');grid.innerHTML='';
   const n=list.length;const ce=document.getElementById('products-count-modern');
   ce.querySelector('.products-count-number').textContent=n;
@@ -1707,6 +1788,8 @@ function renderProfilPage(){
   ${memberSinceHTML}
   ${tgUser?.id?`<div style="color:#6b4c9f;font-size:0.68rem;margin-top:3px;font-family:'Barlow Condensed',sans-serif;">ID Telegram: ${tgUser.id}</div>`:''}</div>
   <div class="profil-stats-block"><div class="profil-stats-icon">📦</div><div><div class="profil-stats-number">${commandes.length}</div><div class="profil-stats-label">${t('profil_orders_count')}</div></div></div>
+  <div class="profil-section-title">📍 Menu</div>
+  <button type="button" class="profil-toggle-btn" onclick="openCitySwitch()">${currentCity?cityLabel(currentCity):'Choisir un menu'} — changer</button>
   <div class="profil-section-title">${t('profil_language_title')}</div>
   <div class="lang-grid">${langButtonsHTML}</div>
   <div class="profil-section-title">${t('profil_my_orders_title')}</div>
@@ -1726,7 +1809,11 @@ function closeAdminLogin(){document.getElementById('admin-login').classList.remo
 function updatePinDots(){for(let i=0;i<4;i++){document.getElementById('dot-'+i).classList.toggle('filled',i<currentPin.length);}}
 document.querySelectorAll('.kp-btn').forEach(btn=>{btn.addEventListener('click',()=>{const v=btn.dataset.v;if(v==='del'){currentPin=currentPin.slice(0,-1);updatePinDots();return;}if(v==='enter'){checkPin();return;}if(currentPin.length<4){currentPin+=v;updatePinDots();}if(currentPin.length===4)setTimeout(checkPin,150);});});
 function checkPin(){if(currentPin===ADMIN_PIN){closeAdminLogin();openAdmin();}else{document.getElementById('pin-error').style.display='block';currentPin='';updatePinDots();setTimeout(()=>{document.getElementById('pin-error').style.display='none';},2000);}}
-function openAdmin(){renderAdminProductsList();renderAdminReseauxList();renderAdminInfoCardsList();renderAdminPrizesList();closeAdminForm();closeReseauForm();closeInfoCardForm();closePrizeForm();document.getElementById('admin-overlay').classList.add('open');}
+function openAdmin(){
+  const cityFilterEl=document.getElementById('admin-city-filter');
+  if(cityFilterEl) cityFilterEl.value = currentCity || 'rouen';
+  renderAdminProductsList();renderAdminReseauxList();renderAdminInfoCardsList();renderAdminPrizesList();closeAdminForm();closeReseauForm();closeInfoCardForm();closePrizeForm();document.getElementById('admin-overlay').classList.add('open');
+}
 function closeAdmin(){document.getElementById('admin-overlay').classList.remove('open');}
 
 function renderAdminReseauxList(){
@@ -1894,11 +1981,15 @@ async function deletePrize(key){
 window.openPrizeForm=openPrizeForm;window.closePrizeForm=closePrizeForm;window.savePrize=savePrize;window.togglePrizeActive=togglePrizeActive;window.deletePrize=deletePrize;
 
 function renderAdminProductsList(){
-  const list=document.getElementById('admin-products-list');const all=products;list.innerHTML='';
-  if(!Object.keys(all).length){list.innerHTML='<p style="color:#8a6bc9;text-align:center;padding:20px;font-weight:700;font-family:\'Barlow Condensed\',sans-serif;">Aucun produit.</p>';return;}
-  Object.values(all).forEach(p=>{
+  const list=document.getElementById('admin-products-list');
+  const cityFilterEl=document.getElementById('admin-city-filter');
+  const cityFilter=cityFilterEl?cityFilterEl.value:'all';
+  const all=Object.values(products).filter(p=>cityFilter==='all'?true:(p.city||'rouen')===cityFilter);
+  list.innerHTML='';
+  if(!all.length){list.innerHTML='<p style="color:#8a6bc9;text-align:center;padding:20px;font-weight:700;font-family:\'Barlow Condensed\',sans-serif;">Aucun produit.</p>';return;}
+  all.forEach(p=>{
     const div=document.createElement('div');div.className='admin-product-card';
-    div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><div class="admin-product-name">${p.title}</div><div class="admin-product-farm">${p.farm} · ${p.category}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">${p.restock?'<span class="admin-restock-on"><span class="restock-spin">⏳</span> RESTOCK</span>':''}</div></div><div class="admin-product-actions"><button class="btn-edit" onclick="openAdminForm('${p.key}')">✏️ Modifier</button><button class="btn-toggle-restock" onclick="toggleRestock('${p.key}')">${p.restock?'✅ Activer':'⏳ Restock'}</button><button class="btn-delete" onclick="deleteAdminProduct('${p.key}')">🗑️</button></div>`;
+    div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px"><div><div class="admin-product-name">${p.title}</div><div class="admin-product-farm">${p.farm} · ${p.category}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="admin-city-badge">${cityLabel(p.city||'rouen')}</span>${p.restock?'<span class="admin-restock-on"><span class="restock-spin">⏳</span> RESTOCK</span>':''}</div></div><div class="admin-product-actions"><button class="btn-edit" onclick="openAdminForm('${p.key}')">✏️ Modifier</button><button class="btn-toggle-restock" onclick="toggleRestock('${p.key}')">${p.restock?'✅ Activer':'⏳ Restock'}</button><button class="btn-delete" onclick="deleteAdminProduct('${p.key}')">🗑️</button></div>`;
     list.appendChild(div);
   });
 }
@@ -1926,6 +2017,7 @@ function openAdminForm(key){
   if(key){
     document.getElementById('admin-form-title').textContent='✏️ Modifier le produit';
     const p=products[key];
+    document.getElementById('af-city').value=p.city||'rouen';
     document.getElementById('af-title').value=p.title||'';
     document.getElementById('af-category').value=p.category||'';
     document.getElementById('af-farm').value=p.farm||'';
@@ -1950,6 +2042,7 @@ function openAdminForm(key){
   }
   else{
     document.getElementById('admin-form-title').textContent='➕ Nouveau produit';
+    document.getElementById('af-city').value = currentCity || 'rouen';
     ['af-title','af-category','af-farm','af-video','af-image','af-strain','af-description'].forEach(id=>document.getElementById(id).value='');
     adminRestockValue=false;
     renderQtyRows([{qty:'',price:''}]);
@@ -1999,14 +2092,14 @@ window.addQtyRow=addQtyRow;
 function getQtyRows(){const rows=document.querySelectorAll('#qty-rows .admin-qty-row');const result=[];rows.forEach(row=>{const inputs=row.querySelectorAll('input');const qty=inputs[0].value.trim();const price=inputs[1].value.trim();if(qty&&price)result.push({qty,price});});return result;}
 
 async function saveAdminProduct(){
-  const key=document.getElementById('admin-edit-key').value;const title=document.getElementById('af-title').value.trim();const category=document.getElementById('af-category').value.trim();const farm=document.getElementById('af-farm').value.trim();const video=document.getElementById('af-video').value.trim();const image=document.getElementById('af-image').value.trim();const strain=document.getElementById('af-strain').value.trim();const description=document.getElementById('af-description').value.trim();const quantities=getQtyRows();
+  const key=document.getElementById('admin-edit-key').value;const city=document.getElementById('af-city').value;const title=document.getElementById('af-title').value.trim();const category=document.getElementById('af-category').value.trim();const farm=document.getElementById('af-farm').value.trim();const video=document.getElementById('af-video').value.trim();const image=document.getElementById('af-image').value.trim();const strain=document.getElementById('af-strain').value.trim();const description=document.getElementById('af-description').value.trim();const quantities=getQtyRows();
   if(!title||!category||!farm){alert('⚠️ Titre, catégorie et farm sont obligatoires !');return;}if(!quantities.length){alert('⚠️ Ajoutez au moins une quantité !');return;}
-  const productData={title,category,farm,video,image,strain,description,quantities,restock:adminRestockValue};
+  const productData={title,category,farm,video,image,strain,description,quantities,restock:adminRestockValue,city};
   const saveKey = key || ('custom_'+Date.now());
   const saveBtn=document.querySelector('.btn-save');if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Sauvegarde...';}
   try{
     await fsSaveProduct(saveKey, productData);
-    closeAdminForm();showAdminToast('✅ Produit sauvegardé !');
+    closeAdminForm();showAdminToast('✅ Produit sauvegardé dans le menu '+cityLabel(city)+' !');
   }catch(e){
     console.error(e);alert('❌ Erreur lors de la sauvegarde. Vérifiez votre connexion.');
   }finally{
@@ -2018,9 +2111,17 @@ window.saveAdminProduct=saveAdminProduct;window.openAdminForm=openAdminForm;wind
 function showAdminToast(msg){const t=document.getElementById('admin-toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
 document.addEventListener('DOMContentLoaded',()=>{
-  populateFilters();renderProducts();updateBadge();goToHome();applyTranslations();
+  populateFilters();renderProducts();updateBadge();goToHome();applyTranslations();updateCityChip();
   const splash=document.getElementById('splash-screen');
-  setTimeout(()=>{splash.classList.add('hidden');setTimeout(()=>{splash.style.display='none';},700);},2600);
+  setTimeout(()=>{
+    splash.classList.add('hidden');
+    setTimeout(()=>{
+      splash.style.display='none';
+      if(!currentCity){
+        document.getElementById('city-select-screen').classList.add('open');
+      }
+    },700);
+  },2600);
 });
 </script>
 </body>
