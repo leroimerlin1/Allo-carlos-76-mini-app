@@ -258,7 +258,7 @@ nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;backgro
 .question-label{display:block;font-size:0.9rem;color:var(--white);margin-bottom:10px;font-weight:800;font-family:var(--font-body);letter-spacing:1px;text-transform:uppercase;}
 .option-btn{width:100%;padding:12px;margin:6px 0;background:rgba(10,1,24,0.8);border:1px solid rgba(176,38,255,0.14);color:var(--white);border-radius:10px;font-size:0.9rem;cursor:pointer;font-family:var(--font-body);font-weight:700;letter-spacing:1px;}
 .option-btn.active{background:linear-gradient(135deg,rgba(176,38,255,0.28),rgba(0,229,255,0.16));color:var(--white);border-color:rgba(57,255,138,0.4);font-weight:900;}
-input[type="time"],input[type="text"],textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(176,38,255,0.25);background:rgba(10,1,24,0.8);color:var(--white);font-size:0.9rem;font-family:var(--font-body);outline:none;letter-spacing:0.5px;}
+input[type="time"],input[type="text"],input[type="email"],textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(176,38,255,0.25);background:rgba(10,1,24,0.8);color:var(--white);font-size:0.9rem;font-family:var(--font-body);outline:none;letter-spacing:0.5px;}
 input:focus,textarea:focus{border-color:rgba(57,255,138,0.45);}
 textarea{min-height:80px;resize:vertical;}
 #submit-order-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:var(--white);border:1px solid rgba(57,255,138,0.25);border-radius:14px;font-size:1.2rem;font-weight:400;margin-top:20px;cursor:pointer;box-shadow:0 0 22px rgba(176,38,255,0.45);font-family:'Bangers',cursive;letter-spacing:3px;}
@@ -445,7 +445,7 @@ textarea{min-height:80px;resize:vertical;}
       <span class="city-select-name">ROUEN</span>
     </div>
     <div class="city-select-btn" onclick="selectCity('espagne')">
-      <span class="city-select-flag">🇪🇸</span>
+      <span class="city-select-flag">🇺🇸🇪🇸</span>
       <span class="city-select-name">Menu📝 envoie de colis</span>
     </div>
   </div>
@@ -517,7 +517,7 @@ textarea{min-height:80px;resize:vertical;}
       <label class="admin-label">Filtrer par ville</label>
       <select id="admin-city-filter" class="compact-select" onchange="renderAdminProductsList()" style="width:100%;">
         <option value="rouen">🇫🇷 Rouen</option>
-        <option value="espagne">🇪🇸 Menu📝 envoie de colis</option>
+        <option value="espagne">🇺🇸🇪🇸 Menu📝 envoie de colis</option>
         <option value="all">🌍 Toutes les villes</option>
       </select>
     </div>
@@ -643,7 +643,7 @@ textarea{min-height:80px;resize:vertical;}
         <label class="admin-label">Ville / Menu</label>
         <select class="admin-input" id="af-city">
           <option value="rouen">🇫🇷 Rouen</option>
-          <option value="espagne">🇪🇸 Menu📝 envoie de colis</option>
+          <option value="espagne">🇺🇸🇪🇸 Menu📝 envoie de colis</option>
         </select>
         <div style="font-size:0.76rem;color:var(--cream-dim);margin-top:6px;">Choisis dans quel menu ce produit doit apparaître. Un produit Rouen n'apparaîtra jamais dans le menu Menu📝 envoie de colis, et inversement.</div>
       </div>
@@ -782,11 +782,12 @@ textarea{min-height:80px;resize:vertical;}
         <div id="colis-questions" style="display:none">
           <div class="question"><span class="question-label">📦 Menu📝 envoie de colis</span></div>
           <div class="question"><span class="question-label">Nom complet du destinataire</span><input type="text" id="colis-nom" placeholder="Nom et prénom"></div>
-          <div class="question"><span class="question-label">Adresse complète</span><input type="text" id="colis-adresse" placeholder="Rue, numéro"></div>
+          <div class="question"><span class="question-label">Ton point relais</span><input type="text" id="colis-point-relais" placeholder="Nom et adresse du point relais"></div>
           <div class="question"><span class="question-label">Code postal</span><input type="text" id="colis-cp" placeholder="Code postal"></div>
           <div class="question"><span class="question-label">Ville</span><input type="text" id="colis-ville" placeholder="Ville"></div>
           <div class="question"><span class="question-label">Pays</span><input type="text" id="colis-pays" placeholder="Pays" value="España"></div>
           <div class="question"><span class="question-label">Téléphone</span><input type="text" id="colis-tel" placeholder="Numéro de téléphone"></div>
+          <div class="question"><span class="question-label">Adresse email</span><input type="email" id="colis-email" placeholder="exemple@email.com"></div>
           <div class="question"><span class="question-label">Précisions (optionnel)</span><textarea id="colis-details" placeholder="Instructions particulières pour la livraison du colis..."></textarea></div>
         </div>
         <button id="submit-order-btn" data-i18n="submit_order_btn">Commander 🍬</button>
@@ -1112,13 +1113,13 @@ window.openCitySwitch = openCitySwitch;
 function updateCityChip(){
   const chip=document.getElementById('city-switch-chip');
   if(!chip) return;
-  if(currentCity==='espagne') chip.textContent='🇪🇸 Menu📝 envoie de colis';
+  if(currentCity==='espagne') chip.textContent='🇺🇸🇪🇸 Menu📝 envoie de colis';
   else if(currentCity==='rouen') chip.textContent='🇫🇷 ROUEN';
   else chip.textContent='📍 Choisir';
 }
 
 function cityLabel(city){
-  return city==='espagne' ? '🇪🇸 Menu📝 envoie de colis' : '🇫🇷 Rouen';
+  return city==='espagne' ? '🇺🇸🇪🇸 Menu📝 envoie de colis' : '🇫🇷 Rouen';
 }
 
 // Affiche/masque l'option "Envoi de colis" dans le panier selon la ville
@@ -1761,13 +1762,19 @@ document.getElementById('submit-order-btn').onclick=()=>{
   const modeBtn=document.querySelector('.questionnaire .option-btn.active');if(!modeBtn){alert(t('select_mode_alert'));return;}
   if(modeBtn.dataset.type==='colis'){
     const nom=document.getElementById('colis-nom').value.trim();
-    const adresse=document.getElementById('colis-adresse').value.trim();
+    const pointRelais=document.getElementById('colis-point-relais').value.trim();
     const cp=document.getElementById('colis-cp').value.trim();
     const ville=document.getElementById('colis-ville').value.trim();
     const pays=document.getElementById('colis-pays').value.trim();
     const tel=document.getElementById('colis-tel').value.trim();
-    if(!nom||!adresse||!cp||!ville||!pays||!tel){
-      alert('⚠️ Merci de remplir tous les champs obligatoires pour l\'envoi de colis (nom, adresse, code postal, ville, pays, téléphone).');
+    const email=document.getElementById('colis-email').value.trim();
+    const emailValid=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if(!nom||!pointRelais||!cp||!ville||!pays||!tel||!email){
+      alert('⚠️ Merci de remplir tous les champs obligatoires pour l\'envoi de colis (nom, point relais, code postal, ville, pays, téléphone, email).');
+      return;
+    }
+    if(!emailValid){
+      alert('⚠️ Merci de saisir une adresse email valide.');
       return;
     }
   }
@@ -1801,18 +1808,20 @@ function finalizeOrder(){
   }
   else if(modeType==='colis'){
     const nom=document.getElementById('colis-nom').value.trim();
-    const adresse=document.getElementById('colis-adresse').value.trim();
+    const pointRelais=document.getElementById('colis-point-relais').value.trim();
     const cp=document.getElementById('colis-cp').value.trim();
     const ville=document.getElementById('colis-ville').value.trim();
     const pays=document.getElementById('colis-pays').value.trim();
     const tel=document.getElementById('colis-tel').value.trim();
+    const email=document.getElementById('colis-email').value.trim();
     const details=document.getElementById('colis-details').value.trim();
     if(nom)message+=`\n👤 Destinataire : ${nom}`;
-    if(adresse)message+=`\n📍 Adresse : ${adresse}`;
+    if(pointRelais)message+=`\n📍 Point relais : ${pointRelais}`;
     if(cp)message+=`\n📮 Code postal : ${cp}`;
     if(ville)message+=`\n🏙️ Ville : ${ville}`;
     if(pays)message+=`\n🌍 Pays : ${pays}`;
     if(tel)message+=`\n📞 Téléphone : ${tel}`;
+    if(email)message+=`\n📧 Email : ${email}`;
     if(details)message+=`\n📝 Détails colis : ${details}`;
   }
   if(rouletteWonPrize){message+=`\n\n🎡 *Lot gagné à la roulette :* ${rouletteWonPrize.icon||'🎁'} ${rouletteWonPrize.name||''}`;}
